@@ -2,7 +2,7 @@
 
 ## 상황
 
-- data arugmentation -> 추가?(개선의 여지 있음)
+- data augmentation -> 추가?(개선의 여지 있음)
 - k-fold -> x, 
 - vaildation -> o (제대로 됬는지 모름)
 - etc...
