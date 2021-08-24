@@ -23,10 +23,10 @@ class MaskImageDataLoader(BaseDataLoader):
     def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.2, num_workers=1, training=True):
         transform = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize((0.1307,), (0.3081,))
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ])
         self.data_dir = data_dir
         self.csv_path = csv_path
         self.dataset = CustomDatasetFromImages(
-            self.data_dir, self.csv_path, transform)
+            self.data_dir, self.csv_path, transform, train=training)
         super().__init__(self.dataset, batch_size, shuffle, validation_split, num_workers)

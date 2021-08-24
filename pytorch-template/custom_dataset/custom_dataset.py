@@ -7,15 +7,17 @@ import os
 
 # https://github.com/utkuozbulak/pytorch-custom-dataset-examples#incorporating-pandas
 class CustomDatasetFromImages(Dataset):
-    def __init__(self, data_dir, csv_path, transforms):
+    def __init__(self, data_dir, csv_path, transforms, train=True):
         """
         Args:
             csv_path (string): path to csv file
             img_path (string): path to the folder where images are
             transform: pytorch transforms for transforms and tensor conversion
         """
-        self.data_dir = data_dir
-        self.csv_path = csv_path
+        self.train = train
+
+        self.data_dir = data_dir + 'train/images/' if self.train else data_dir + 'eval/images/'
+        self.csv_path = csv_path if self.train else data_dir + 'eval/info.csv'
 
         # Write CSV with Labeling
         # 초기 한 번만 실행
@@ -25,31 +27,47 @@ class CustomDatasetFromImages(Dataset):
         # Transforms
         self.transforms = transforms
         # Read the csv file
-        self.data_info = pd.read_csv(csv_path)
+        self.data_info = pd.read_csv(self.csv_path)
 
-        # Image paths
-        # 하드코딩 극혐 죄송합니다
-        self.image_arr = np.asarray(
-            self.data_dir + self.data_info['id'] + '_' +
-            self.data_info['gender'] + '_' +
-            self.data_info['race'] + '_' +
-            self.data_info['age'].astype(str) + '/' +
-            self.data_info['path'])
-        # Labels
-        self.label_arr = np.asarray(self.data_info['label'])
-        # Calculate len
+        if self.train:  # Train Dataset
+            # Image paths
+            # 하드코딩 극혐 죄송합니다
+            self.image_arr = np.asarray(
+                self.data_dir + self.data_info['id'] + '_' +
+                self.data_info['gender'] + '_' +
+                self.data_info['race'] + '_' +
+                self.data_info['age'].astype(str) + '/' +
+                self.data_info['path'])
+            # Labels
+            self.label_arr = np.asarray(self.data_info['label'])
+        else:  # Test Dataset
+            self.image_arr = np.asarray(
+                self.data_dir + self.data_info['ImageID'])
+
+            # Calculate len
         self.data_len = len(self.data_info.index)
 
     def __getitem__(self, index):
-        # Get image name from the pandas df
-        single_image_name = self.image_arr[index]
-        # Open image
-        img_as_img = Image.open(single_image_name)
-        # Transform image to tensor
-        transform_image = self.transforms(img_as_img)
-        # Get label(class) of the image based on the cropped pandas column
-        single_image_label = self.label_arr[index]
-        return (transform_image, single_image_label)
+        if self.train:
+            # Get image name from the pandas df
+            single_image_name = self.image_arr[index]
+            # Open image
+            img_as_img = Image.open(single_image_name)
+            # Transform image to tensor
+            if self.transforms is not None:
+                transform_image = self.transforms(img_as_img)
+            # Get label(class) of the image based on the cropped pandas column
+            single_image_label = self.label_arr[index]
+            return (transform_image, single_image_label)
+        else:
+            # Get image name from the pandas df
+            single_image_name = self.image_arr[index]
+            # Open image
+            img_as_img = Image.open(single_image_name)
+            # Transform image to tensor
+            if self.transforms is not None:
+                transform_image = self.transforms(img_as_img)
+            return transform_image
 
     def __len__(self):
         return self.data_len

@@ -8,10 +8,10 @@
     "data_loader": {
         "type": "MaskImageDataLoader",
         "args": {
-            "data_dir": "data/input/data/train/images/",
+            "data_dir": "data/input/data/",
             "batch_size": 32,
             "shuffle": true,
-            "validation_split": 0.1,
+            "validation_split": 0.2,
             "num_workers": 2,
             "csv_path": "data/train_csv_with_labels.csv"
         }
