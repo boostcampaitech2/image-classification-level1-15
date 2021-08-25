@@ -85,3 +85,39 @@ class EfficientNet3(BaseModel):
         output = self.pretrained_model(x)
         output = self.fc(output)
         return output
+
+
+class MaskClassifier(BaseModel):
+    def __init__(self, pre_name, num_of_classes=3):
+        super().__init__()
+        self.pretrained_model = timm.create_model(pre_name, pretrained=True)
+        self.fc = nn.Linear(self.m.classifier.out_features, num_of_classes)
+
+    def forward(self, x):
+        x = self.pretrained_model(x)
+        x = self.fc(x)
+        return x
+
+
+class GenderClassifier(BaseModel):
+    def __init__(self, pre_name, num_of_classes=2):
+        super().__init__()
+        self.pretrained_model = timm.create_model(pre_name, pretrained=True)
+        self.fc = nn.Linear(self.m.classifier.out_features, num_of_classes)
+
+    def forward(self, x):
+        x = self.pretrained_model(x)
+        x = self.fc(x)
+        return x
+
+
+class AgeClassifier(BaseModel):
+    def __init__(self, pre_name, num_of_classes=3):
+        super().__init__()
+        self.pretrained_model = timm.create_model(pre_name, pretrained=True)
+        self.fc = nn.Linear(self.m.classifier.out_features, num_of_classes)
+
+    def forward(self, x):
+        x = self.pretrained_model(x)
+        x = self.fc(x)
+        return x

@@ -1,9 +1,11 @@
 {
-    "name": "GenderClassificationEfficientnet",
+    "name": "AgeClassificationEfficientnet",
     "n_gpu": 1,
     "arch": {
-        "type": "EfficientNet1",
-        "args": {}
+        "type": "AgeClassifier",
+        "args": {
+            "pre_name": "efficientnet_b3"
+        }
     },
     "data_loader": {
         "type": "MaskImageDataLoader",

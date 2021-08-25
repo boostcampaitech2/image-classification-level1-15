@@ -20,7 +20,7 @@ class MnistDataLoader(BaseDataLoader):
 
 
 class MaskImageDataLoader(BaseDataLoader):
-    def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.2, num_workers=2, training=True):
+    def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.2, num_workers=4, training=True):
         transform = transforms.Compose([
             # Albumentation 으로 변경
             transforms.ToTensor(),
