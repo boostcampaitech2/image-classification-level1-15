@@ -91,7 +91,8 @@ class MaskClassifier(BaseModel):
     def __init__(self, pre_name, num_of_classes=3):
         super().__init__()
         self.pretrained_model = timm.create_model(pre_name, pretrained=True)
-        self.fc = nn.Linear(self.m.classifier.out_features, num_of_classes)
+        self.fc = nn.Linear(
+            self.pretrained_model.classifier.out_features, num_of_classes)
 
     def forward(self, x):
         x = self.pretrained_model(x)
@@ -103,7 +104,8 @@ class GenderClassifier(BaseModel):
     def __init__(self, pre_name, num_of_classes=2):
         super().__init__()
         self.pretrained_model = timm.create_model(pre_name, pretrained=True)
-        self.fc = nn.Linear(self.m.classifier.out_features, num_of_classes)
+        self.fc = nn.Linear(
+            self.pretrained_model.classifier.out_features, num_of_classes)
 
     def forward(self, x):
         x = self.pretrained_model(x)
@@ -114,7 +116,8 @@ class AgeClassifier(BaseModel):
     def __init__(self, pre_name, num_of_classes=3):
         super().__init__()
         self.pretrained_model = timm.create_model(pre_name, pretrained=True)
-        self.fc = nn.Linear(self.m.classifier.out_features, num_of_classes)
+        self.fc = nn.Linear(
+            self.mpretrained_model.classifier.out_features, num_of_classes)
 
     def forward(self, x):
         x = self.pretrained_model(x)

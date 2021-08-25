@@ -4,7 +4,7 @@
     "arch": {
         "type": "GenderClassifier",
         "args": {
-            "pre_name": "efficientnet_b3"
+            "pre_name": "efficientnet_b1"
         }
     },
     "data_loader": {
@@ -14,7 +14,7 @@
             "batch_size": 64,
             "shuffle": true,
             "validation_split": 0.2,
-            "num_workers": 4,
+            "num_workers": 2,
             "csv_path": "data/train_csv_with_multi_labels.csv"
         }
     },
@@ -38,7 +38,7 @@
         }
     },
     "trainer": {
-        "epochs": 3,
+        "epochs": 10,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
