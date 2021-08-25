@@ -201,7 +201,7 @@ class Labeling():
         train_csv_with_labels.to_csv(
             'data/train_csv_with_labels.csv', index=False)
 
-    def age_categorize(self, n):
+    def categorize_age(self, n):
         if int(n) < 30:
             return 0
         elif 30 <= int(n) < 60:
@@ -209,7 +209,7 @@ class Labeling():
         elif int(n) >= 60:
             return 2
 
-    def mask_categorize(self, s):
+    def categorize_mask(self, s):
         if s.startswith('mask'):
             return 0
         elif s.startswith('incorrect'):
@@ -226,10 +226,10 @@ class Labeling():
             train_csv_with_labels['gender'] == 'female').astype(int)
 
         train_csv_with_multi_labels['age_label'] = train_csv_with_labels['age'].apply(
-            self.age_categorize)
+            self.categorize_age)
 
         train_csv_with_multi_labels['mask_label'] = train_csv_with_labels['path'].apply(
-            self.mask_categorize)
+            self.categorize_mask)
 
         print(train_csv_with_multi_labels.head(7))
         return train_csv_with_multi_labels
