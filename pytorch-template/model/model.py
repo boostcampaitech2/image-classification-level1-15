@@ -50,7 +50,7 @@ class EfficientNet1(BaseModel):
         super().__init__()
 
         self.pretrained_model = timm.create_model(
-            'efficientnet_b1', pretrained=True)
+            'efficientnet_b3', pretrained=True)
         self.fc = nn.Linear(1000, num_classes)
 
     def forward(self, x):
@@ -64,7 +64,7 @@ class EfficientNet2(BaseModel):
         super().__init__()
 
         self.pretrained_model = timm.create_model(
-            'efficientnet_b1', pretrained=True)
+            'efficientnet_b3', pretrained=True)
         self.fc = nn.Linear(1000, num_classes)
 
     def forward(self, x):
@@ -78,7 +78,7 @@ class EfficientNet3(BaseModel):
         super().__init__()
 
         self.pretrained_model = timm.create_model(
-            'efficientnet_b1', pretrained=True)
+            'efficientnet_b3', pretrained=True)
         self.fc = nn.Linear(1000, num_classes)
 
     def forward(self, x):

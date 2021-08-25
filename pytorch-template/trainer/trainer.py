@@ -50,10 +50,16 @@ class Trainer(BaseTrainer):
             self.optimizer.zero_grad()
             output = self.model(data)
             if model_name == 'EfficientNet1':
+                self.criterion = torch.nn.CrossEntropyLoss(
+                    weight=torch.tensor([1.5, 1.0]).to(self.device))
                 loss = self.criterion(output, gender)
             if model_name == 'EfficientNet2':
+                self.criterion = torch.nn.CrossEntropyLoss(
+                    weight=torch.tensor([1., 1., 6.]).to(self.device))
                 loss = self.criterion(output, age)
             if model_name == 'EfficientNet3':
+                self.criterion = torch.nn.CrossEntropyLoss(
+                    weight=torch.tensor([1., 2., 2.]).to(self.device))
                 loss = self.criterion(output, mask)
             loss.backward()
             self.optimizer.step()
@@ -116,13 +122,13 @@ class Trainer(BaseTrainer):
                 self.valid_metrics.update('loss', loss.item())
                 for met in self.metric_ftns:
                     if model_name == 'EfficientNet1':
-                        self.train_metrics.update(
+                        self.valid_metrics.update(
                             met.__name__, met(output, gender))
                     if model_name == 'EfficientNet2':
-                        self.train_metrics.update(
+                        self.valid_metrics.update(
                             met.__name__, met(output, age))
                     if model_name == 'EfficientNet3':
-                        self.train_metrics.update(
+                        self.valid_metrics.update(
                             met.__name__, met(output, mask))
 
                 self.writer.add_image('input', make_grid(
