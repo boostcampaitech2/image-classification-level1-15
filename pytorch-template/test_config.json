@@ -2,7 +2,11 @@
     "name": "GenderClassificationEfficientnet",
     "n_gpu": 1,
     "arch": {
-        "type": "EfficientNet1",
+        "type": [
+            "EfficientNet1",
+            "EfficientNet2",
+            "EfficientNet3"
+        ],
         "args": {}
     },
     "data_loader": {
