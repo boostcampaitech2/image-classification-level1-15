@@ -107,8 +107,7 @@ class GenderClassifier(BaseModel):
 
     def forward(self, x):
         x = self.pretrained_model(x)
-        x = self.fc(x)
-        return x
+        return self.fc(x)
 
 
 class AgeClassifier(BaseModel):
