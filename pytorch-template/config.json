@@ -1,8 +1,8 @@
 {
-    "name": "GenderClassificationEfficientnet",
+    "name": "AgeE3",
     "n_gpu": 1,
     "arch": {
-        "type": "EfficientNet1",
+        "type": "EfficientNet2",
         "args": {}
     },
     "data_loader": {
@@ -26,7 +26,8 @@
     },
     "loss": "cross_entropy_loss",
     "metrics": [
-        "accuracy"
+        "accuracy",
+        "f1"
     ],
     "lr_scheduler": {
         "type": "StepLR",
