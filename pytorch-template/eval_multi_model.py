@@ -33,13 +33,14 @@ def main(config):
     model3 = EfficientNet3()
 
     checkpoint1 = torch.load(
-        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/GenderClassificationEfficientnet/0825_044850/model_best.pth")
+        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/GenderE3/0825_115432/model_best.pth")
+    # orderddict Object
     state_dict1 = checkpoint1['state_dict']
     checkpoint2 = torch.load(
-        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/AgeClassificationEfficientnet/0825_040108/model_best.pth")
+        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/AgeE3/0825_121954/model_best.pth")
     state_dict2 = checkpoint2['state_dict']
     checkpoint3 = torch.load(
-        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/MaskClassificationEfficientnet/0825_032519/model_best.pth")
+        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/MaskE3/0825_105751/model_best.pth")
     state_dict3 = checkpoint3['state_dict']
 
     model1.load_state_dict(state_dict1)
@@ -64,9 +65,9 @@ def main(config):
         for i, image in enumerate(tqdm(data_loader)):
             image = image.to(device)
 
-            output1 = model1(image)
-            output2 = model2(image)
-            output3 = model3(image)
+            output1 = model1(image)  # gender 0=male, 1=female
+            output2 = model2(image)  # age
+            output3 = model3(image)  # 마스크 착용여부
 
             pred1 = output1.argmax(dim=-1)
             pred2 = output2.argmax(dim=-1)
@@ -76,54 +77,18 @@ def main(config):
             age_pred.extend(pred2.cpu().numpy())
             mask_pred.extend(pred3.cpu().numpy())
 
+    CLASS_DICT = {
+        '000': 0, '001': 1, '002': 2, '010': 3, '011': 4, '012': 5,
+        '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
+        '200': 12, '201': 13, '202': 14, '210': 15, '211': 16, '212': 17
+    }
+
     all_predictions = []
-    for i in range(len(mask_pred)):
-        if mask_pred[i] == 0:
-            if gender_pred[i] == 0:
-                if age_pred[i] == 0:
-                    all_predictions.append(0)
-                elif age_pred[i] == 1:
-                    all_predictions.append(1)
-                elif age_pred[i] == 2:
-                    all_predictions.append(2)
-            elif gender_pred[i] == 1:
-                if age_pred[i] == 0:
-                    all_predictions.append(3)
-                elif age_pred[i] == 1:
-                    all_predictions.append(4)
-                elif age_pred[i] == 2:
-                    all_predictions.append(5)
-        elif mask_pred[i] == 1:
-            if gender_pred[i] == 0:
-                if age_pred[i] == 0:
-                    all_predictions.append(6)
-                elif age_pred[i] == 1:
-                    all_predictions.append(7)
-                elif age_pred[i] == 2:
-                    all_predictions.append(8)
-            elif gender_pred[i] == 1:
-                if age_pred[i] == 0:
-                    all_predictions.append(9)
-                elif age_pred[i] == 1:
-                    all_predictions.append(10)
-                elif age_pred[i] == 2:
-                    all_predictions.append(11)
-        elif mask_pred[i] == 2:
-            if gender_pred[i] == 0:
-                if age_pred[i] == 0:
-                    all_predictions.append(12)
-                elif age_pred[i] == 1:
-                    all_predictions.append(13)
-                elif age_pred[i] == 2:
-                    all_predictions.append(14)
-            elif gender_pred[i] == 1:
-                if age_pred[i] == 0:
-                    all_predictions.append(15)
-                elif age_pred[i] == 1:
-                    all_predictions.append(16)
-                elif age_pred[i] == 2:
-                    all_predictions.append(17)
-    submission['ans'] = all_predictions
+
+    preds = zip(gender_pred, age_pred, mask_pred)
+    labels = [CLASS_DICT[''.join(map(str, [mask, gender, age]))]
+              for gender, age, mask in preds]
+    submission['ans'] = labels
     submission.to_csv('submission.csv', index=False)
 
 
