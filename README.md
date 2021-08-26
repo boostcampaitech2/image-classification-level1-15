@@ -8,7 +8,10 @@
 - evaluation 시 학습모델을 저장한 폴더와 모델 이름만 eval_config.json 파일에 작성하면 자동으로 best_model 경로를
   불러와서 테스트할 수 있도록 만들었습니다.
 
-## Prev Install
+## Prev
+
+- data 폴더에 input 폴더(이미지포함) 저장
+
 ```
 conda install --file packagelist.txt
 conda activate base
