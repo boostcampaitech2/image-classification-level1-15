@@ -33,22 +33,3 @@ class Model(BaseModel):
             assert "Num Classes and Label Name are not matched."
         elif num_classes == 18 and label_name != "total":
             assert "Num Classes and Label Name are not matched."
-
-
-class FastModel(BaseModel):
-    def __init__(self, num_classes=2, label_name="gender", pretrained_model='efficientnet_b1', pretrained_out_feature=1000):
-        super().__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 30, kernel_size=5, stride=1, padding=0),
-            nn.BatchNorm2d(30),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2)
-        )
-
-        self.fc = nn.Linear(12 * 12 * 30, num_classes)
-
-    def forward(self, x):
-        out = self.layer1(x)
-        out = out.reshape(out.size(0), -1)
-        out = self.fc(out)
-        return out

@@ -57,26 +57,26 @@ class CustomDatasetFromImages(Dataset):
             # Get image name from the pandas df
             single_image_name = self.image_arr[index]
             # Open image
-            img_as_img = Image.open(single_image_name)
+            img_as_img = np.array(Image.open(single_image_name))
             # Transform image to tensor
             if self.transforms is not None:
-                transform_image = self.transforms(img_as_img)
+                transform_image = self.transforms(image=img_as_img)
             # Get label(class) of the image based on the cropped pandas column
             single_image_label = self.label_arr[index]
             single_gender_label = self.gender_label_arr[index]
             single_age_label = self.age_label_arr[index]
             single_mask_label = self.mask_label_arr[index]
-            return (transform_image, single_image_label,
+            return (transform_image['image'], single_image_label,
                     single_gender_label, single_age_label, single_mask_label)
         else:
             # Get image name from the pandas df
             single_image_name = self.image_arr[index]
             # Open image
-            img_as_img = Image.open(single_image_name)
+            img_as_img = np.array(Image.open(single_image_name))
             # Transform image to tensor
             if self.transforms is not None:
-                transform_image = self.transforms(img_as_img)
-            return transform_image
+                transform_image = self.transforms(image=img_as_img)
+            return transform_image['image']
 
     def __len__(self):
         return self.data_len
