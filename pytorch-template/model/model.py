@@ -8,13 +8,14 @@ import timm
 
 # 3 * 512 * 384
 class Model(BaseModel):
-    def __init__(self, num_classes=2, label_name="gender", pretrained_model='efficientnet_b1', pretrained_out_feature=1000):
+    def __init__(self, num_classes=2, label_name="gender", pretrained_model='efficientnet_b1'):
         self.check_args(num_classes, label_name, pretrained_model)
 
         super().__init__()
         self.pretrained_model = timm.create_model(
             pretrained_model, pretrained=True)
-        self.fc = nn.Linear(pretrained_out_feature, num_classes)
+        self.fc = nn.Linear(
+            self.pretrained_model.classifier.out_features, num_classes)
 
     def forward(self, x):
         output = self.pretrained_model(x)
