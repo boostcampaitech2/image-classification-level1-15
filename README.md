@@ -7,10 +7,12 @@
 - config 파일 수정 만으로 원하는 사전학습 모델을 불러와 원하는 태스크 별 라벨을 학습할 수 있도록 하였습니다.
 - evaluation 시 학습모델을 저장한 폴더와 모델 이름만 eval_config.json 파일에 작성하면 자동으로 best_model 경로를
   불러와서 테스트할 수 있도록 만들었습니다.
+- albumentation 을 추가하였습니다.
 
 ## Prev
 
 - data 폴더에 input 폴더(이미지포함) 저장
+- conda 환경을 강요합니다.
 
 ```
 conda install --file packagelist.txt
