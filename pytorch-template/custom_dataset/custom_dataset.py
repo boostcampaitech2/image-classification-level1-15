@@ -4,9 +4,11 @@ from PIL import Image
 import numpy as np
 import os
 from torchvision import datasets, transforms
-
+import albumentations.pytorch
 
 # https://github.com/utkuozbulak/pytorch-custom-dataset-examples#incorporating-pandas
+
+
 class CustomDatasetFromImages(Dataset):
     def __init__(self, data_dir, csv_path, transforms, train=True):
         """
@@ -84,7 +86,7 @@ class CustomDatasetFromImages(Dataset):
 
 
 class CustomDatasetFromImages2(Dataset):
-    def __init__(self, d_type, resize, data_dir, csv_path, transform, train):
+    def __init__(self, d_type, resize, data_dir, csv_path, transform, train=False):
         """
         Args:
             csv_path (string): path to csv file
@@ -97,12 +99,12 @@ class CustomDatasetFromImages2(Dataset):
         if self.is_train:
             self.transforms = transform  # augmuent
         else:
-            self.transforms = transforms.Compose([
+            self.transforms = albumentations.Compose([
                 # Albumentation 으로 변경
-                transforms.Resize((resize, resize)),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=(0.5, 0.5, 0.5),
-                                     std=(0.2, 0.2, 0.2))
+                albumentations.Resize(resize, resize),
+                albumentations.Normalize(mean=(0.5, 0.5, 0.5),
+                                         std=(0.2, 0.2, 0.2)),
+                albumelsntations.pytorch.transforms.ToTensorV2()
             ])
 
         self.data_dir = data_dir + 'train/images/'
@@ -132,30 +134,30 @@ class CustomDatasetFromImages2(Dataset):
     def __getitem__(self, index):
         single_image_name = self.image_arr[index]
         # Open image
-        img_as_img = Image.open(single_image_name)
-        transform_image = self.transforms(img_as_img)
+        img_as_img = np.array(Image.open(single_image_name))
+        transform_image = self.transforms(image=img_as_img)
         # print(self.transforms)
         target = self.label[index]
-        return transform_image, target
+        return transform_image['image'], target
 
     def __len__(self):
         return len(self.data_info)
 
 
 class AgeLabel50To60Smoothing(Dataset):
-    def __init__(self, resize, data_dir, csv_path, transform, train):
+    def __init__(self, resize, data_dir, csv_path, transform):
 
-        self.is_train = train
+        #self.is_train = train
 
-        if self.is_train:
+        if transform:
             self.transforms = transform  # augmuent
         else:
-            self.transforms = transforms.Compose([
+            self.transforms = albumentations.Compose([
                 # Albumentation 으로 변경
-                transforms.Resize((resize, resize)),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=(0.5, 0.5, 0.5),
-                                     std=(0.2, 0.2, 0.2))
+                albumentations.Resize(resize, resize),
+                albumentations.Normalize(mean=(0.5, 0.5, 0.5),
+                                         std=(0.2, 0.2, 0.2)),
+                albumentations.pytorch.transforms.ToTensorV2()
             ])
 
         self.data_dir = data_dir + 'train/images/'
@@ -163,6 +165,7 @@ class AgeLabel50To60Smoothing(Dataset):
         self.csv_path = csv_path
 
         self.data_info = pd.read_csv(self.csv_path)
+
         self.image_arr = np.asarray(
             self.data_dir + self.data_info['id'] + '_' +
             self.data_info['gender'] + '_' +
@@ -172,7 +175,8 @@ class AgeLabel50To60Smoothing(Dataset):
         # Labels
 
         self.label = None
-        self.age_info = self.data_info['age']
+        self.age_info = self.data_info['age']  # 실제 나이 etc 40, 50,
+        # print(self.age_info)
 
         self.label_arr = np.asarray(self.data_info['label'])
         self.label = np.asarray(self.data_info['age_label'])
@@ -186,15 +190,14 @@ class AgeLabel50To60Smoothing(Dataset):
         else:
             # 51~ 59
             floating_age = (self.age_info[index] - 50) / 10
-            target = self.age_info + floating_age
+            target = self.age_info[index] + floating_age
 
         single_image_name = self.image_arr[index]
         # Open image
-        img_as_img = Image.open(single_image_name)
-        transform_image = self.transforms(img_as_img)
+        img_as_img = np.array(Image.open(single_image_name))
+        transform_image = self.transforms(image=img_as_img)
         # print(self.transforms)
-        target = self.label[index]
-        return transform_image, target
+        return transform_image['image'], target
 
     def __len__(self):
         return len(self.data_info)

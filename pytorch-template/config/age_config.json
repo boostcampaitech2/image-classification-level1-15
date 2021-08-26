@@ -6,15 +6,13 @@
         "args": {
             "num_classes": 2,
             "label_name": "age",
-            "pretrained_model": "efficientnet_b1",
-            "pretrained_out_feature": 1000
+            "pretrained_model": "efficientnet_b1"
         }
     },
     "data_loader": {
-        "type": "MaskImageDataLoader",
+        "type": "AgeSmoothingDataLoader",
         "args": {
-            "d_type": "age",
-            "resize": 260,
+            "resize": 224,
             "data_dir": "data/input/data/",
             "batch_size": 64,
             "shuffle": true,
@@ -30,7 +28,7 @@
             "momentum": 0.9
         }
     },
-    "loss": "cross_entropy_loss_age",
+    "loss": "cross_entropy_loss_age_smooth",
     "metrics": [
         "accuracy",
         "f1"
@@ -43,7 +41,7 @@
         }
     },
     "trainer": {
-        "epochs": 10,
+        "epochs": 1,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,

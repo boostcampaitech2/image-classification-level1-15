@@ -1,6 +1,6 @@
 from torchvision import datasets, transforms
 from base import BaseDataLoader
-from custom_dataset import CustomDatasetFromImages2
+from custom_dataset import *
 import albumentations.pytorch
 
 
@@ -22,4 +22,30 @@ class MaskImageDataLoader(BaseDataLoader):
         # d_type, resize, data_dir, csv_path, transforms, train
         self.dataset = CustomDatasetFromImages2(
             self.d_type, self.resize, self.data_dir, self.csv_path, self.transform, train=training)
+        super().__init__(self.dataset, batch_size, shuffle, validation_split, num_workers)
+
+#
+# Todo Base Data Loader 에서 training parameter에 의해 validset에 augementation 되는지 확인하기
+
+#self, resize, data_dir, csv_path, transform
+
+
+class AgeSmoothingDataLoader(BaseDataLoader):
+    def __init__(self, resize, data_dir, csv_path, batch_size, shuffle=True, validation_split=0, num_workers=2, training=False):
+        self.transform = albumentations.Compose([
+            albumentations.ColorJitter(brightness=(0.2, 2), contrast=(
+                0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3)),
+            albumentations.HorizontalFlip(),
+            albumentations.augmentations.transforms.ToGray(),
+            albumentations.Normalize(
+                mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
+            albumentations.Resize(resize, resize),
+            albumentations.pytorch.transforms.ToTensorV2()
+        ])
+        self.data_dir = data_dir
+        self.csv_path = csv_path
+        self.resize = resize
+
+        self.dataset = AgeLabel50To60Smoothing(
+            self.resize, self.data_dir, self.csv_path, self.transform)
         super().__init__(self.dataset, batch_size, shuffle, validation_split, num_workers)
