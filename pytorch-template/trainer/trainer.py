@@ -26,14 +26,20 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
-        self.log_step = int(np.sqrt(data_loader.batch_size))
-
+        self.log_step = int(np.sqrt(data_loader.batch_size))  # 로그스텝?
+        #self.log_step = 100
         self.train_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
         self.valid_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
 
     def _train_epoch(self, epoch):
+        """
+        Training logic for an epoch
+
+        :param epoch: Integer, current training epoch.
+        :return: A log that contains average loss and metric in this epoch.
+        """
         self.model.train()
         self.train_metrics.reset()
         label_name = self.config['arch']['args']['label_name']
@@ -103,6 +109,12 @@ class Trainer(BaseTrainer):
         return log
 
     def _valid_epoch(self, epoch):
+        """
+        Validate after training an epoch
+
+        :param epoch: Integer, current training epoch.
+        :return: A log that contains information about validation
+        """
         self.model.eval()
         self.valid_metrics.reset()
         label_name = self.config['arch']['args']['label_name']

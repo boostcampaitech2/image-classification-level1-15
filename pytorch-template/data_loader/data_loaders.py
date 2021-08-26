@@ -1,6 +1,6 @@
 from torchvision import datasets, transforms
 from base import BaseDataLoader
-from custom_dataset import CustomDatasetFromImages
+from custom_dataset import CustomDatasetFromImages2
 import albumentations.pytorch
 
 
@@ -18,6 +18,8 @@ class MaskImageDataLoader(BaseDataLoader):
         ])
         self.data_dir = data_dir
         self.csv_path = csv_path
-        self.dataset = CustomDatasetFromImages(
-            self.data_dir, self.csv_path, transform, train=training)
+
+        # d_type, resize, data_dir, csv_path, transforms, train
+        self.dataset = CustomDatasetFromImages2(
+            self.d_type, self.resize, self.data_dir, self.csv_path, self.transform, train=training)
         super().__init__(self.dataset, batch_size, shuffle, validation_split, num_workers)

@@ -3,6 +3,7 @@ from torch.utils.data import Dataset
 from PIL import Image
 import numpy as np
 import os
+from torchvision import datasets, transforms
 
 
 # https://github.com/utkuozbulak/pytorch-custom-dataset-examples#incorporating-pandas
@@ -82,16 +83,148 @@ class CustomDatasetFromImages(Dataset):
         return self.data_len
 
 
-"""
-       id  gender   race age                path  label  gender_label  age_label  mask_label
-0  000001  female  Asian  45           mask3.jpg      4             1          1           0
-1  000001  female  Asian  45           mask2.jpg      4             1          1           0
-2  000001  female  Asian  45           mask5.jpg      4             1          1           0
-3  000001  female  Asian  45           mask4.jpg      4             1          1           0
-4  000001  female  Asian  45  incorrect_mask.jpg     10             1          1           1
-5  000001  female  Asian  45          normal.jpg     16             1          1           2
-6  000001  female  Asian  45           mask1.jpg      4             1          1           0
-"""
+class CustomDatasetFromImages2(Dataset):
+    def __init__(self, d_type, resize, data_dir, csv_path, transform, train):
+        """
+        Args:
+            csv_path (string): path to csv file
+            img_path (string): path to the folder where images are
+            transform: pytorch transforms for transforms and tensor conversion
+        """
+        self.d_type = d_type
+        self.is_train = train
+
+        if self.is_train:
+            self.transforms = transform  # augmuent
+        else:
+            self.transforms = transforms.Compose([
+                # Albumentation 으로 변경
+                transforms.Resize((resize, resize)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=(0.5, 0.5, 0.5),
+                                     std=(0.2, 0.2, 0.2))
+            ])
+
+        self.data_dir = data_dir + 'train/images/'
+
+        self.csv_path = csv_path
+
+        self.data_info = pd.read_csv(self.csv_path)
+        self.image_arr = np.asarray(
+            self.data_dir + self.data_info['id'] + '_' +
+            self.data_info['gender'] + '_' +
+            self.data_info['race'] + '_' +
+            self.data_info['age'].astype(str) + '/' +
+            self.data_info['path'])
+        # Labels
+
+        self.label = None
+
+        self.label_arr = np.asarray(self.data_info['label'])
+
+        if self.d_type == 'gender':
+            self.label = np.asarray(self.data_info['gender_label'])
+        elif self.d_type == 'age':
+            self.label = np.asarray(self.data_info['age_label'])
+        elif self.d_type == 'mask':
+            self.label = np.asarray(self.data_info['mask_label'])
+
+    def __getitem__(self, index):
+        single_image_name = self.image_arr[index]
+        # Open image
+        img_as_img = Image.open(single_image_name)
+        transform_image = self.transforms(img_as_img)
+        # print(self.transforms)
+        target = self.label[index]
+        return transform_image, target
+
+    def __len__(self):
+        return len(self.data_info)
+
+
+class AgeLabel50To60Smoothing(Dataset):
+    def __init__(self, resize, data_dir, csv_path, transform, train):
+
+        self.is_train = train
+
+        if self.is_train:
+            self.transforms = transform  # augmuent
+        else:
+            self.transforms = transforms.Compose([
+                # Albumentation 으로 변경
+                transforms.Resize((resize, resize)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=(0.5, 0.5, 0.5),
+                                     std=(0.2, 0.2, 0.2))
+            ])
+
+        self.data_dir = data_dir + 'train/images/'
+
+        self.csv_path = csv_path
+
+        self.data_info = pd.read_csv(self.csv_path)
+        self.image_arr = np.asarray(
+            self.data_dir + self.data_info['id'] + '_' +
+            self.data_info['gender'] + '_' +
+            self.data_info['race'] + '_' +
+            self.data_info['age'].astype(str) + '/' +
+            self.data_info['path'])
+        # Labels
+
+        self.label = None
+        self.age_info = self.data_info['age']
+
+        self.label_arr = np.asarray(self.data_info['label'])
+        self.label = np.asarray(self.data_info['age_label'])
+
+    def __getitem__(self, index):
+        target = None
+        if self.age_info[index] <= 50:
+            target = self.label[index]
+        elif self.age_info[index] >= 60:
+            target = self.label[index]
+        else:
+            # 51~ 59
+            floating_age = (self.age_info[index] - 50) / 10
+            target = self.age_info + floating_age
+
+        single_image_name = self.image_arr[index]
+        # Open image
+        img_as_img = Image.open(single_image_name)
+        transform_image = self.transforms(img_as_img)
+        # print(self.transforms)
+        target = self.label[index]
+        return transform_image, target
+
+    def __len__(self):
+        return len(self.data_info)
+
+
+class TestDataset(Dataset):
+    def __init__(self, img_paths, transform):
+        self.img_paths = img_paths
+        self.transform = transform
+
+    def __getitem__(self, index):
+        image = Image.open(self.img_paths[index])
+
+        if self.transform:
+            image = self.transform(image)
+        return image
+
+    def __len__(self):
+        return len(self.img_paths)
+
+# """
+#        id  gender   race age                path  label  gender_label  age_label  mask_label
+# 0  000001  female  Asian  45           mask3.jpg      4             1          1           0
+# 1  000001  female  Asian  45           mask2.jpg      4             1          1           0
+# 2  000001  female  Asian  45           mask5.jpg      4             1          1           0
+# 3  000001  female  Asian  45           mask4.jpg      4             1          1           0
+# 4  000001  female  Asian  45  incorrect_mask.jpg     10             1          1           1
+# 5  000001  female  Asian  45          normal.jpg     16             1          1           2
+# 6  000001  female  Asian  45           mask1.jpg      4             1          1           0
+# """
 
 
 class Labeling():
