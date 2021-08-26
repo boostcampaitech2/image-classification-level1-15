@@ -8,12 +8,52 @@ import model.model as module_arch
 from parse_config import ConfigParser
 import pandas as pd
 from torchvision import models
-import timm
-from model.model import EfficientNet1, EfficientNet2, EfficientNet3
+import os
+
+
+def init_models(config):
+    models = [
+        config.eval_init_obj('arch', module_arch, 1),
+        config.eval_init_obj('arch', module_arch, 2),
+        config.eval_init_obj('arch', module_arch, 3)
+    ]
+    return models
+
+
+def get_latest_saved_model_paths(config):
+    checkpoint_path = "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/"
+    save_paths = [
+        checkpoint_path + config['save_directory_name']['gender'],
+        checkpoint_path + config['save_directory_name']['age'],
+        checkpoint_path + config['save_directory_name']['mask']
+    ]
+
+    latest_saved_directory = [
+        sorted(os.listdir(save_paths[0]))[-1],
+        sorted(os.listdir(save_paths[1]))[-1],
+        sorted(os.listdir(save_paths[2]))[-1]
+    ]
+
+    latest_saved_model_paths = [
+        save_paths[0] + "/" + latest_saved_directory[0] + "/model_best.pth",
+        save_paths[1] + "/" + latest_saved_directory[1] + "/model_best.pth",
+        save_paths[2] + "/" + latest_saved_directory[2] + "/model_best.pth"
+    ]
+    return latest_saved_model_paths
+
+
+def get_saved_model_state_dict(latest_saved_model_paths):
+    checkpoint1 = torch.load(latest_saved_model_paths[0])
+    state_dict1 = checkpoint1['state_dict']
+    checkpoint2 = torch.load(latest_saved_model_paths[1])
+    state_dict2 = checkpoint2['state_dict']
+    checkpoint3 = torch.load(latest_saved_model_paths[2])
+    state_dict3 = checkpoint3['state_dict']
+
+    return [state_dict1, state_dict2, state_dict3]
 
 
 def main(config):
-
     data_loader = getattr(module_data, config['data_loader']['type'])(
         config['data_loader']['args']['data_dir'],
         batch_size=64,
@@ -25,23 +65,12 @@ def main(config):
     )
 
     print()
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model1 = EfficientNet1()
-    model2 = EfficientNet2()
-    model3 = EfficientNet3()
-
-    checkpoint1 = torch.load(
-        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/GenderE3/0825_115432/model_best.pth")
-    # orderddict Object
-    state_dict1 = checkpoint1['state_dict']
-    checkpoint2 = torch.load(
-        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/AgeE3/0825_121954/model_best.pth")
-    state_dict2 = checkpoint2['state_dict']
-    checkpoint3 = torch.load(
-        "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/MaskE3/0825_105751/model_best.pth")
-    state_dict3 = checkpoint3['state_dict']
+    model1, model2, model3 = init_models(config)
+    latest_saved_model_paths = get_latest_saved_model_paths(config)
+    state_dict1, state_dict2, state_dict3 = get_saved_model_state_dict(
+        latest_saved_model_paths)
 
     model1.load_state_dict(state_dict1)
     model2.load_state_dict(state_dict2)
@@ -51,6 +80,7 @@ def main(config):
     model1 = model1.to(device)
     model2 = model2.to(device)
     model3 = model3.to(device)
+
     model1.eval()
     model2.eval()
     model3.eval()
@@ -65,8 +95,11 @@ def main(config):
         for i, image in enumerate(tqdm(data_loader)):
             image = image.to(device)
 
-            output1 = model1(image)  # gender 0=male, 1=female
-            output2 = model2(image)  # age
+            # 0:male, 1:female
+            output1 = model1(image)
+            # 0: age < 30, 1: 30 <= age < 60, 2: 60 <= age
+            output2 = model2(image)
+            # 0: mask, 2: incorrect, 3: normal
             output3 = model3(image)  # 마스크 착용여부
 
             pred1 = output1.argmax(dim=-1)
@@ -82,8 +115,6 @@ def main(config):
         '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
         '200': 12, '201': 13, '202': 14, '210': 15, '211': 16, '212': 17
     }
-
-    all_predictions = []
 
     preds = zip(gender_pred, age_pred, mask_pred)
     labels = [CLASS_DICT[''.join(map(str, [mask, gender, age]))]

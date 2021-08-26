@@ -1,9 +1,14 @@
 {
-    "name": "AgeE3",
+    "name": "GenderClf",
     "n_gpu": 1,
     "arch": {
-        "type": "EfficientNet2",
-        "args": {}
+        "type": "Model",
+        "args": {
+            "num_classes": 2,
+            "label_name": "gender",
+            "pretrained_model": "efficientnet_b1",
+            "pretrained_out_feature": 1000
+        }
     },
     "data_loader": {
         "type": "MaskImageDataLoader",
@@ -17,11 +22,10 @@
         }
     },
     "optimizer": {
-        "type": "Adam",
+        "type": "SGD",
         "args": {
-            "lr": 0.0005,
-            "weight_decay": 0,
-            "amsgrad": true
+            "lr": 0.01,
+            "momentum": 0.9
         }
     },
     "loss": "cross_entropy_loss",

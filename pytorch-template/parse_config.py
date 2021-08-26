@@ -94,6 +94,14 @@ class ConfigParser:
         module_args.update(kwargs)
         return getattr(module, module_name)(*args, **module_args)
 
+    def eval_init_obj(self, name, module, type_num, *args, **kwargs):
+        module_name = self[name]['type' + str(type_num)]
+        module_args = dict(self[name]['args' + str(type_num)])
+        assert all([k not in module_args for k in kwargs]
+                   ), 'Overwriting kwargs given in config file is not allowed'
+        module_args.update(kwargs)
+        return getattr(module, module_name)(*args, **module_args)
+
     def init_ftn(self, name, module, *args, **kwargs):
         """
         Finds a function handle with the name given as 'type' in config, and returns the

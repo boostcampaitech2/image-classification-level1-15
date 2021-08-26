@@ -1,13 +1,33 @@
 {
     "name": "GenderClassificationEfficientnet",
     "n_gpu": 1,
+    "save_directory_name": {
+        "gender": "GenderClf",
+        "age": "AgeClf",
+        "mask": "MaskClf"
+    },
     "arch": {
-        "type": [
-            "EfficientNet1",
-            "EfficientNet2",
-            "EfficientNet3"
-        ],
-        "args": {}
+        "type1": "Model",
+        "args1": {
+            "num_classes": 2,
+            "label_name": "gender",
+            "pretrained_model": "efficientnet_b1",
+            "pretrained_out_feature": 1000
+        },
+        "type2": "Model",
+        "args2": {
+            "num_classes": 3,
+            "label_name": "age",
+            "pretrained_model": "efficientnet_b1",
+            "pretrained_out_feature": 1000
+        },
+        "type3": "Model",
+        "args3": {
+            "num_classes": 3,
+            "label_name": "mask",
+            "pretrained_model": "efficientnet_b1",
+            "pretrained_out_feature": 1000
+        }
     },
     "data_loader": {
         "type": "MaskImageDataLoader",
