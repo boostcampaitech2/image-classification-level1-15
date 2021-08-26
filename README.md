@@ -1,5 +1,11 @@
 # Baseline
 
+## Prev Install
+```
+cd pytorch-template
+conda install --file packagelist.txt
+```
+
 ## USAGE
 1. edit config.json (or age_config, gender_config, mask_config)
 2. python train.py -c config.json
