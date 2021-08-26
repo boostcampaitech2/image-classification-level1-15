@@ -1,1 +1,0 @@
-2021-08-25 16:49:39,381 - timm.models.helpers - INFO - Loading pretrained weights from url (https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights/efficientnet_b1-533bc792.pth)

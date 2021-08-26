@@ -117,7 +117,7 @@ class AgeClassifier(BaseModel):
         super().__init__()
         self.pretrained_model = timm.create_model(pre_name, pretrained=True)
         self.fc = nn.Linear(
-            self.mpretrained_model.classifier.out_features, num_of_classes)
+            self.pretrained_model.classifier.out_features, num_of_classes)
 
     def forward(self, x):
         x = self.pretrained_model(x)

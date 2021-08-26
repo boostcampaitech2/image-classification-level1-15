@@ -26,54 +26,35 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
-        self.log_step = int(np.sqrt(data_loader.batch_size))
-
+        self.log_step = int(np.sqrt(data_loader.batch_size))  # 로그스텝?
+        #self.log_step = 100
         self.train_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
         self.valid_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
 
     def _train_epoch(self, epoch):
+        """
+        Training logic for an epoch
+
+        :param epoch: Integer, current training epoch.
+        :return: A log that contains average loss and metric in this epoch.
+        """
         self.model.train()
         self.train_metrics.reset()
-        model_name = self.config['arch']['type']
-        for batch_idx, (data, target, gender, age, mask) in enumerate(self.data_loader):
-
-            data = data.to(self.device)
-            if model_name == 'EfficientNet1':
-                gender = gender.to(self.device)
-            if model_name == 'EfficientNet2':
-                age = age.to(self.device)
-            if model_name == 'EfficientNet3':
-                mask = mask.to(self.device)
+        for batch_idx, (data, target) in enumerate(self.data_loader):
+            data, target = data.to(self.device), target.to(self.device)
 
             self.optimizer.zero_grad()
             output = self.model(data)
-            if model_name == 'EfficientNet1':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1.5, 1.0]).to(self.device))
-                loss = self.criterion(output, gender)
-            if model_name == 'EfficientNet2':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 1., 6.]).to(self.device))
-                loss = self.criterion(output, age)
-            if model_name == 'EfficientNet3':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 2., 2.]).to(self.device))
-                loss = self.criterion(output, mask)
+            loss = self.criterion(output, target)
             loss.backward()
             self.optimizer.step()
 
             self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
             self.train_metrics.update('loss', loss.item())
             for met in self.metric_ftns:
-                if model_name == 'EfficientNet1':
-                    self.train_metrics.update(
-                        met.__name__, met(output, gender))
-                if model_name == 'EfficientNet2':
-                    self.train_metrics.update(met.__name__, met(output, age))
-                if model_name == 'EfficientNet3':
-                    self.train_metrics.update(met.__name__, met(output, mask))
+                self.train_metrics.update(met.__name__, met(output, target))
 
             if batch_idx % self.log_step == 0:
                 self.logger.debug('Train Epoch: {} {} Loss: {:.6f}'.format(
@@ -89,48 +70,34 @@ class Trainer(BaseTrainer):
 
         if self.do_validation:
             val_log = self._valid_epoch(epoch)
-            log.update(**{'val_' + k: v for k, v in val_log.items()})
+            log.update(**{'val_'+k: v for k, v in val_log.items()})
 
         if self.lr_scheduler is not None:
             self.lr_scheduler.step()
         return log
 
     def _valid_epoch(self, epoch):
+        """
+        Validate after training an epoch
+
+        :param epoch: Integer, current training epoch.
+        :return: A log that contains information about validation
+        """
         self.model.eval()
         self.valid_metrics.reset()
-        model_name = self.config['arch']['type']
         with torch.no_grad():
-            for batch_idx, (data, target, gender, age, mask) in enumerate(self.valid_data_loader):
-                data = data.to(self.device)
-                if model_name == 'EfficientNet1':
-                    gender = gender.to(self.device)
-                if model_name == 'EfficientNet2':
-                    age = age.to(self.device)
-                if model_name == 'EfficientNet3':
-                    mask = mask.to(self.device)
+            for batch_idx, (data, target) in enumerate(self.valid_data_loader):
+                data, target = data.to(self.device), target.to(self.device)
 
                 output = self.model(data)
-                if model_name == 'EfficientNet1':
-                    loss = self.criterion(output, gender)
-                if model_name == 'EfficientNet2':
-                    loss = self.criterion(output, age)
-                if model_name == 'EfficientNet3':
-                    loss = self.criterion(output, mask)
+                loss = self.criterion(output, target)
 
                 self.writer.set_step(
                     (epoch - 1) * len(self.valid_data_loader) + batch_idx, 'valid')
                 self.valid_metrics.update('loss', loss.item())
                 for met in self.metric_ftns:
-                    if model_name == 'EfficientNet1':
-                        self.valid_metrics.update(
-                            met.__name__, met(output, gender))
-                    if model_name == 'EfficientNet2':
-                        self.valid_metrics.update(
-                            met.__name__, met(output, age))
-                    if model_name == 'EfficientNet3':
-                        self.valid_metrics.update(
-                            met.__name__, met(output, mask))
-
+                    self.valid_metrics.update(
+                        met.__name__, met(output, target))
                 self.writer.add_image('input', make_grid(
                     data.cpu(), nrow=8, normalize=True))
 

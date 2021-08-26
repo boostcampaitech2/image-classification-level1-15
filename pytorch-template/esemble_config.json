@@ -1,15 +1,40 @@
 {
-    "name": "AgeClassificationEfficientnet",
+    "name": "ClassificationEfficientnet",
     "n_gpu": 1,
     "arch": {
-        "type": "AgeClassifier",
+        "type": [
+            "GenderClassifier",
+            "AgeClassifier",
+            "MaskClassifier"
+        ],
         "args": {
-            "pre_name": "efficientnet_b1"
+            "backbone": [
+                "efficientnet_b2",
+                "efficientnet_b2",
+                "efficientnet_b2"
+            ],
+            "backbone_point": [
+                [
+                    4,
+                    5
+                ],
+                [
+                    2,
+                    5
+                ],
+                [
+                    1,
+                    2,
+                    3
+                ]
+            ]
         }
     },
     "data_loader": {
-        "type": "MaskImageDataLoader",
+        "type": "MaskImageDataLoader2",
         "args": {
+            "d_type": "age",
+            "resize": 260,
             "data_dir": "data/input/data/",
             "batch_size": 64,
             "shuffle": true,
@@ -38,7 +63,7 @@
         }
     },
     "trainer": {
-        "epochs": 10,
+        "epochs": 3,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
