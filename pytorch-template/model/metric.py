@@ -32,10 +32,10 @@ def f1(output, target, is_training=False):
     if target.ndim == 2:
         target = target.argmax(dim=1)
 
-    tp = (pred * target).sum().to(torch.float32)
-    fp = ((target - 1) * (target - 1)).sum().to(torch.float32)
-    tn = ((pred - 1) * target).sum().to(torch.float32)
-    fn = (pred * (target - 1)).sum().to(torch.float32)
+    tp = (target * pred).sum().to(torch.float32)
+    tn = ((1 - target) * (1 - pred)).sum().to(torch.float32)
+    fp = ((1 - target) * pred).sum().to(torch.float32)
+    fn = (target * (1 - pred)).sum().to(torch.float32)
 
     epsilon = 1e-7
 

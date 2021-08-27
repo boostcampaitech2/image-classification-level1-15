@@ -8,7 +8,7 @@ import model.loss as module_loss
 import model.metric as module_metric
 import model.model as module_arch
 from parse_config import ConfigParser
-from trainer import Trainer, DefaultTrainer
+from trainer import Trainer
 from utils import prepare_device
 from custom_dataset import CustomDatasetFromImages
 

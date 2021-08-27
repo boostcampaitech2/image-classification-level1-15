@@ -6,13 +6,20 @@
         "args": {
             "num_classes": 3,
             "label_name": "mask",
+<<<<<<< HEAD
             "pretrained_model": "efficientnet_b3"
+=======
+            "pretrained_model": "efficientnet_b1"
+>>>>>>> 8e4be59d69bce1c679f013825971d55568d5218c
         }
     },
     "data_loader": {
         "type": "MaskImageDataLoader",
         "args": {
+<<<<<<< HEAD
             "resize": 300,
+=======
+>>>>>>> 8e4be59d69bce1c679f013825971d55568d5218c
             "data_dir": "data/input/data/",
             "batch_size": 64,
             "shuffle": true,
@@ -29,7 +36,7 @@
             "amsgrad": true
         }
     },
-    "loss": "cross_entropy_loss_mask",
+    "loss": "cross_entropy_loss",
     "metrics": [
         "accuracy",
         "f1"

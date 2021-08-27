@@ -1,16 +1,30 @@
 # Baseline
 
-## Prev Install
+## 수정사항
+
+- config 파일을 전부 config 폴더에 옮겼습니다.
+- 쓸모없는 파일 삭제 및 디렉토리 정리했습니다.
+- config 파일 수정 만으로 원하는 사전학습 모델을 불러와 원하는 태스크 별 라벨을 학습할 수 있도록 하였습니다.
+- evaluation 시 학습모델을 저장한 폴더와 모델 이름만 eval_config.json 파일에 작성하면 자동으로 best_model 경로를
+  불러와서 테스트할 수 있도록 만들었습니다.
+- albumentation 을 추가하였습니다.
+
+## Prev
+
+- data 폴더에 input 폴더(이미지포함) 저장
+- conda 환경을 강요합니다.
+
 ```
-cd pytorch-template
 conda install --file packagelist.txt
+conda activate base
+conda install -c conda-forge albumentations
 ```
 
 ## USAGE
-1. edit config.json (or age_config, gender_config, mask_config)
-2. python train.py -c config.json
-3. edit test_config.json
-4. python eval_multi_model.py -c test_config.json
+1. edit config/config.json (or age_config, gender_config, mask_config)
+2. python train.py -c config/config.json
+3. edit config/eval_config.json
+4. python eval_multi_model.py -c config/eval_config.json
 
 ## Edit config
 

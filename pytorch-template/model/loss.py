@@ -10,6 +10,7 @@ def nll_loss(output, target):
 
 def cross_entropy_loss(output, target):
     return F.cross_entropy(output, target)
+<<<<<<< HEAD
 
 
 def cross_entropy_loss_gen(output, target):
@@ -32,3 +33,5 @@ def cross_entropy_loss_age_smooth(output, target):
     loss = nn.MultiLabelMarginLoss()
 
     return loss(output, target)
+=======
+>>>>>>> 8e4be59d69bce1c679f013825971d55568d5218c

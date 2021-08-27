@@ -87,6 +87,7 @@ class CustomDatasetFromImages(Dataset):
         return self.data_len
 
 
+<<<<<<< HEAD
 class CustomDatasetFromImages2(Dataset):
     def __init__(self, d_type, resize, data_dir, csv_path, transform, train=False):
         """
@@ -226,6 +227,8 @@ class TestDataset(Dataset):
     def __len__(self):
         return len(self.img_paths)
 
+=======
+>>>>>>> 8e4be59d69bce1c679f013825971d55568d5218c
 # """
 #        id  gender   race age                path  label  gender_label  age_label  mask_label
 # 0  000001  female  Asian  45           mask3.jpg      4             1          1           0
