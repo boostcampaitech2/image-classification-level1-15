@@ -9561,6 +9561,13 @@ id,gender,race,age,path,label,gender_label,age_label,mask_label
 003396,female,Asian,20,incorrect_mask.jpg,9,1,0,1
 003396,female,Asian,20,normal.jpg,15,1,0,2
 003396,female,Asian,20,mask1.jpg,3,1,0,0
+003397,female,Asian,20,mask3.jpg,3,1,0,0
+003397,female,Asian,20,mask2.jpg,3,1,0,0
+003397,female,Asian,20,mask5.jpg,3,1,0,0
+003397,female,Asian,20,mask4.jpg,3,1,0,0
+003397,female,Asian,20,incorrect_mask.jpg,9,1,0,1
+003397,female,Asian,20,normal.jpg,15,1,0,2
+003397,female,Asian,20,mask1.jpg,3,1,0,0
 003397,female,Asian,19,mask3.jpg,3,1,0,0
 003397,female,Asian,19,mask2.jpg,3,1,0,0
 003397,female,Asian,19,mask5.jpg,3,1,0,0
@@ -17895,7 +17902,7 @@ id,gender,race,age,path,label,gender_label,age_label,mask_label
 006578,male,Asian,19,mask1.jpeg,0,0,0,0
 006578,male,Asian,19,normal.jpeg,12,0,0,2
 006578,male,Asian,19,mask3.jpeg,0,0,0,0
-006578,male,Asian,19,mask5.jpeg,0,0,0,0
+006578,male,Asian,19,mask5.jpg,0,0,0,0
 006578,male,Asian,19,mask4.jpeg,0,0,0,0
 006578,male,Asian,19,mask2.jpeg,0,0,0,0
 006579,female,Asian,20,mask3.jpg,3,1,0,0
@@ -17909,7 +17916,7 @@ id,gender,race,age,path,label,gender_label,age_label,mask_label
 006580,female,Asian,20,mask1.jpeg,3,1,0,0
 006580,female,Asian,20,normal.jpeg,15,1,0,2
 006580,female,Asian,20,mask3.jpeg,3,1,0,0
-006580,female,Asian,20,mask5.jpeg,3,1,0,0
+006580,female,Asian,20,mask5.jpg,3,1,0,0
 006580,female,Asian,20,mask4.jpeg,3,1,0,0
 006580,female,Asian,20,mask2.jpeg,3,1,0,0
 006582,female,Asian,20,incorrect_mask.jpeg,9,1,0,1
@@ -18892,10 +18899,3 @@ id,gender,race,age,path,label,gender_label,age_label,mask_label
 006959,male,Asian,19,incorrect_mask.jpg,6,0,0,1
 006959,male,Asian,19,normal.jpg,12,0,0,2
 006959,male,Asian,19,mask1.jpg,0,0,0,0
-007000,female,Asian,20,mask3.jpg,3,1,0,0
-007000,female,Asian,20,mask2.jpg,3,1,0,0
-007000,female,Asian,20,mask5.jpg,3,1,0,0
-007000,female,Asian,20,mask4.jpg,3,1,0,0
-007000,female,Asian,20,incorrect_mask.jpg,9,1,0,1
-007000,female,Asian,20,normal.jpg,15,1,0,2
-007000,female,Asian,20,mask1.jpg,3,1,0,0
