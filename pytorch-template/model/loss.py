@@ -10,7 +10,6 @@ def nll_loss(output, target):
 
 def cross_entropy_loss(output, target):
     return F.cross_entropy(output, target)
-<<<<<<< HEAD
 
 
 def cross_entropy_loss_gen(output, target):
@@ -28,10 +27,8 @@ def cross_entropy_loss_mask(output, target):
     return F.cross_entropy(output, target, torch.tensor([1., 1.5, 1.5]).to(device))
 
 
-def cross_entropy_loss_age_smooth(output, target):
-    device = 'cuda'
-    loss = nn.MultiLabelMarginLoss()
+# def cross_entropy_loss_age_smooth(output, target):
+#     device = 'cuda'
+#     loss = nn.MultiLabelMarginLoss()
 
-    return loss(output, target)
-=======
->>>>>>> 8e4be59d69bce1c679f013825971d55568d5218c
+#     return loss(output, target)
