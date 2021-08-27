@@ -5,6 +5,8 @@ import numpy as np
 import os
 from torchvision import datasets, transforms
 import albumentations.pytorch
+import torch.nn.functional as F
+import torch
 
 # https://github.com/utkuozbulak/pytorch-custom-dataset-examples#incorporating-pandas
 
@@ -145,16 +147,16 @@ class CustomDatasetFromImages2(Dataset):
 
 
 class AgeLabel50To60Smoothing(Dataset):
-    def __init__(self, resize, data_dir, csv_path, transform):
+    def __init__(self, data_dir, csv_path, transforms, train=True):
 
-        #self.is_train = train
+        # self.is_train = train
 
-        if transform:
-            self.transforms = transform  # augmuent
+        if transforms:
+            self.transforms = transforms  # augmuent
         else:
             self.transforms = albumentations.Compose([
                 # Albumentation 으로 변경
-                albumentations.Resize(resize, resize),
+                albumentations.Resize(300, 300),
                 albumentations.Normalize(mean=(0.5, 0.5, 0.5),
                                          std=(0.2, 0.2, 0.2)),
                 albumentations.pytorch.transforms.ToTensorV2()
@@ -183,14 +185,20 @@ class AgeLabel50To60Smoothing(Dataset):
 
     def __getitem__(self, index):
         target = None
-        if self.age_info[index] <= 50:
-            target = self.label[index]
+        if self.age_info[index] <= 45:
+            target = torch.tensor(self.label[index])
+            target = F.one_hot(target, 3)
+            # print(target.type())
         elif self.age_info[index] >= 60:
-            target = self.label[index]
+            target = torch.tensor(self.label[index])
+            target = F.one_hot(target, 3)
+            # print(target.type())
         else:
-            # 51~ 59
-            floating_age = (self.age_info[index] - 50) / 10
-            target = self.age_info[index] + floating_age
+            target = torch.tensor([0, 1, 1])
+            # [1.223,0.12323,4124] =pred
+            # [1],[2]
+
+            # target = torch.sum(target, ratio_tensor)
 
         single_image_name = self.image_arr[index]
         # Open image

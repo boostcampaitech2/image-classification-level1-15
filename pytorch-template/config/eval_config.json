@@ -11,19 +11,19 @@
         "args1": {
             "num_classes": 2,
             "label_name": "gender",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "efficientnet_b3"
         },
-        "type2": "Model",
+        "type2": "SmoothTestingModel",
         "args2": {
             "num_classes": 3,
             "label_name": "age",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "efficientnet_b3"
         },
         "type3": "Model",
         "args3": {
             "num_classes": 3,
             "label_name": "mask",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "efficientnet_b3"
         }
     },
     "data_loader": {

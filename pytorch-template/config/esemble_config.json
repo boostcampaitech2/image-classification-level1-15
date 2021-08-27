@@ -3,29 +3,25 @@
     "n_gpu": 1,
     "arch": {
         "type": [
-            "GenderClassifier",
-            "AgeClassifier",
-            "MaskClassifier"
+            "Model",
+            "SmoothTestingModel",
+            "Model"
         ],
         "args": {
             "backbone": [
-                "efficientnet_b2",
-                "efficientnet_b2",
-                "efficientnet_b2"
+                "efficientnet_b3",
+                "efficientnet_b3",
+                "efficientnet_b3"
             ],
             "backbone_point": [
                 [
-                    4,
-                    5
+                    4
                 ],
                 [
-                    2,
-                    5
+                    2
                 ],
                 [
-                    1,
-                    2,
-                    3
+                    1
                 ]
             ]
         }

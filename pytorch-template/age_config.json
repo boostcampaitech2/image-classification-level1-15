@@ -1,18 +1,17 @@
 {
-    "name": "GenderClf",
+    "name": "AgeClassificationEfficientnet",
     "n_gpu": 1,
     "arch": {
-        "type": "Model",
+        "type": "AgeClassifier",
         "args": {
-            "num_classes": 2,
-            "label_name": "gender",
-            "pretrained_model": "efficientnet_b3"
+            "pre_name": "mob"
         }
     },
     "data_loader": {
-        "type": "MaskImageDataLoader",
+        "type": "AgeSmoothingDataLoader",
         "args": {
-            "resize": 300,
+            "d_type": "age",
+            "resize": 260,
             "data_dir": "data/input/data/",
             "batch_size": 64,
             "shuffle": true,
@@ -24,14 +23,13 @@
     "optimizer": {
         "type": "Adam",
         "args": {
-            "lr": 0.0005,
+            "lr": 0.001,
             "weight_decay": 0,
             "amsgrad": true
         }
     },
-    "loss": "cross_entropy_loss_gen",
+    "loss": "cross_entropy_loss_age",
     "metrics": [
-        "accuracy",
         "f1"
     ],
     "lr_scheduler": {

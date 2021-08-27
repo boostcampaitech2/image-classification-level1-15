@@ -50,12 +50,12 @@ def main(config):
     lr_scheduler = config.init_obj(
         'lr_scheduler', torch.optim.lr_scheduler, optimizer)
 
-    trainer = Trainer(model, criterion, metrics, optimizer,
-                      config=config,
-                      device=device,
-                      data_loader=data_loader,
-                      valid_data_loader=valid_data_loader,
-                      lr_scheduler=lr_scheduler)
+    trainer = DefaultTrainer(model, criterion, metrics, optimizer,
+                             config=config,
+                             device=device,
+                             data_loader=data_loader,
+                             valid_data_loader=valid_data_loader,
+                             lr_scheduler=lr_scheduler)
 
     trainer.train()
 

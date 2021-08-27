@@ -47,7 +47,7 @@ def main(config):
     # 모델과 같은 transform을 줄것!!
 
     transform = transforms.Compose([
-        Resize((260, 260), Image.BILINEAR),
+        Resize((300, 300), Image.BILINEAR),
         ToTensor(),
         Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
     ])
@@ -68,9 +68,11 @@ def main(config):
 
     all_pred = []
 
-    gender_model = GenderClassifier(backbones[0])
-    age_model = AgeClassifier(backbones[1])
-    mask_model = MaskClassifier(backbones[2])
+    gender_model = Model(label_name="gender", pretrained_model=backbones[2])
+    age_model = SmoothTestingModel(
+        num_classes=3, pretrained_model=backbones[1])
+    mask_model = Model(num_classes=3, label_name="age",
+                       pretrained_model=backbones[2])
 
     gender_model.to(device)
     age_model.to(device)
@@ -94,16 +96,13 @@ def main(config):
         for a_e in config["arch"]['args']["backbone_point"][1]:
             for m_e in config["arch"]['args']["backbone_point"][2]:
                 checkpoint1 = torch.load(
-                    "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/GenderClassificationEfficientnet" +
-                    "/0826_074744/checkpoint-epoch"+str(g_e)+'.pth')
+                    "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/GenderClf/0826_183918/model_best.pth")
                 state_dict1 = checkpoint1['state_dict']
                 checkpoint2 = torch.load(
-                    "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/AgeClassificationEfficientnet" +
-                    "/0826_072654/checkpoint-epoch"+str(a_e)+'.pth')
+                    "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/SmoothTestingModel/0826_192838/model_best.pth")
                 state_dict2 = checkpoint2['state_dict']
                 checkpoint3 = torch.load(
-                    "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/MaskClassificationEfficientnet" +
-                    "/0826_080831/checkpoint-epoch"+str(m_e)+'.pth')
+                    "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/MaskClf/0826_200650/model_best.pth")
                 state_dict3 = checkpoint3['state_dict']
                 gender_model.load_state_dict(state_dict1)
                 age_model.load_state_dict(state_dict2)
