@@ -1,4 +1,6 @@
+from torch import tensor
 import torch.nn.functional as F
+import torch
 
 
 def nll_loss(output, target):

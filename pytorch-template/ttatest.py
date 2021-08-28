@@ -94,6 +94,7 @@ def main(config):
     with torch.no_grad():
         for i, image in enumerate(tqdm(data_loader)):
             image = image.to(device)
+
             # 0:male, 1:female
             output1 = model1(image)
             # 0: age < 30, 1: 30 <= age < 60, 2: 60 <= age
@@ -108,7 +109,7 @@ def main(config):
             gender_pred.extend(pred1.cpu().numpy())
             age_pred.extend(pred2.cpu().numpy())
             mask_pred.extend(pred3.cpu().numpy())
-
+    print(model1)
     CLASS_DICT = {
         '000': 0, '001': 1, '002': 2, '010': 3, '011': 4, '012': 5,
         '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
@@ -119,7 +120,7 @@ def main(config):
     labels = [CLASS_DICT[''.join(map(str, [mask, gender, age]))]
               for gender, age, mask in preds]
     submission['ans'] = labels
-    submission.to_csv('submission.csv', index=False)
+    # submission.to_csv('submission.csv', index=False)
 
 
 if __name__ == '__main__':

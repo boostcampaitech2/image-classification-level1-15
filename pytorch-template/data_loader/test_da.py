@@ -23,21 +23,3 @@ class MaskImageDataLoader(BaseDataLoader):
         self.dataset = CustomDatasetFromImages(
             self.data_dir, self.csv_path, self.transform, train=training)
         super().__init__(self.dataset, batch_size, shuffle, validation_split, num_workers)
-
-'''
-class EvalDataset(Dataset):
-    def __init__(self, img_paths, transform):
-        self.img_paths = img_paths
-        self.transform = transform
-
-    def __getitem__(self, index):
-        image = Image.open(self.img_paths[index])
-
-        if self.transform:
-            image = self.transform(image)
-        return image
-
-    def __len__(self):
-        return len(self.img_paths)
-
-'''

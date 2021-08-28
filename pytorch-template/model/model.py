@@ -6,125 +6,35 @@ from torchvision import models
 import timm
 
 
-class MnasNet1(BaseModel):
-    def __init__(self, num_classes=2):
+# 3 * 512 * 384
+class Model(BaseModel):
+    def __init__(self, num_classes=2, label_name="gender", pretrained_model='efficientnet_b1'):
+        self.check_args(num_classes, label_name, pretrained_model)
+
         super().__init__()
-
-        self.pretrained_model = models.mnasnet1_0(pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-
-
-class MnasNet2(BaseModel):
-    def __init__(self, num_classes=3):
-        super().__init__()
-
-        self.pretrained_model = models.mnasnet1_0(pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-
-
-class MnasNet3(BaseModel):
-    def __init__(self, num_classes=3):
-        super().__init__()
-
-        self.pretrained_model = models.mnasnet1_0(pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-
-
-class EfficientNet1(BaseModel):
-    def __init__(self, num_classes=2):
-        super().__init__()
-
         self.pretrained_model = timm.create_model(
-            'efficientnet_b3', pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
+            pretrained_model, pretrained=True)
+        
+        # self.fc = nn.Linear(self.embed_dim, self.num_classes) if self.num_classes > 0 else nn.Identity()
+        self.fc = nn.Linear(
+            1000, num_classes)
+ 
+        # self.fc = nn.Linear(
+            # self.pretrained_model.classifier.out_features, num_classes)
 
     def forward(self, x):
         output = self.pretrained_model(x)
         output = self.fc(output)
         return output
 
-
-class EfficientNet2(BaseModel):
-    def __init__(self, num_classes=3):
-        super().__init__()
-
-        self.pretrained_model = timm.create_model(
-            'efficientnet_b3', pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-
-
-class EfficientNet3(BaseModel):
-    def __init__(self, num_classes=3):
-        super().__init__()
-
-        self.pretrained_model = timm.create_model(
-            'efficientnet_b3', pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-
-
-class ViT1(BaseModel):
-    def __init__(self, num_classes=2):
-        super().__init__()
-
-        self.pretrained_model = timm.create_model(
-            'vit_base_patch16_384', pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-
-
-class ViT2(BaseModel):
-    def __init__(self, num_classes=3):
-        super().__init__()
-
-        self.pretrained_model = timm.create_model(
-            'vit_base_patch16_384', pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-
-
-class ViT3(BaseModel):
-    def __init__(self, num_classes=3):
-        super().__init__()
-
-        self.pretrained_model = timm.create_model(
-            'vit_base_patch16_384', pretrained=True)
-        self.fc = nn.Linear(1000, num_classes)
-
-    def forward(self, x):
-        output = self.pretrained_model(x)
-        output = self.fc(output)
-        return output
-# vit_base_patch16_224
+    def check_args(self, num_classes, label_name, pretrained_model):
+        if label_name not in ["gender", "age", "mask", "total"]:
+            assert "Label Name is incorrect.\n\tLabel name is one of [gender, age, mask, total]."
+        if not timm.is_model(pretrained_model):
+            assert "Model does not create from timm.\nPlease check the model name."
+        if num_classes == 2 and label_name != "gender":
+            assert "Num Classes and Label Name are not matched."
+        elif num_classes == 3 and label_name not in ["age", "mask"]:
+            assert "Num Classes and Label Name are not matched."
+        elif num_classes == 18 and label_name != "total":
+            assert "Num Classes and Label Name are not matched."

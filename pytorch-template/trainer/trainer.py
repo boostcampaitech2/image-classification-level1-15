@@ -4,6 +4,8 @@ from torchvision.utils import make_grid
 from base import BaseTrainer
 from utils import inf_loop, MetricTracker
 
+import wandb
+wandb.init(project='p1', entity='keemdy')
 
 class Trainer(BaseTrainer):
     """
@@ -26,40 +28,50 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
-        self.log_step = int(np.sqrt(data_loader.batch_size))
-
+        self.log_step = int(np.sqrt(data_loader.batch_size))  # 로그스텝?
+        #self.log_step = 100
         self.train_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
         self.valid_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
 
     def _train_epoch(self, epoch):
+        """
+        Training logic for an epoch
+
+        :param epoch: Integer, current training epoch.
+        :return: A log that contains average loss and metric in this epoch.
+        """
         self.model.train()
         self.train_metrics.reset()
-        model_name = self.config['arch']['type']
+        label_name = self.config['arch']['args']['label_name']
         for batch_idx, (data, target, gender, age, mask) in enumerate(self.data_loader):
 
             data = data.to(self.device)
-            if model_name == 'ViT1':
+            if label_name == 'gender':
                 gender = gender.to(self.device)
-            if model_name == 'ViT2':
+            elif label_name == 'age':
                 age = age.to(self.device)
-            if model_name == 'ViT3':
+            elif label_name == 'mask':
                 mask = mask.to(self.device)
+            elif label_name == 'total':
+                target = target.to(self.device)
 
             self.optimizer.zero_grad()
             output = self.model(data)
-            if model_name == 'ViT1':
+            if label_name == 'gender':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1.5, 1.0]).to(self.device))
                 loss = self.criterion(output, gender)
-            if model_name == 'ViT2':
+            elif label_name == 'age':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1., 1., 6.]).to(self.device))
                 loss = self.criterion(output, age)
-            if model_name == 'ViT3':
+            elif label_name == 'mask':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1., 2., 2.]).to(self.device))
+                loss = self.criterion(output, mask)
+            elif label_name == 'total':
                 loss = self.criterion(output, mask)
             loss.backward()
             self.optimizer.step()
@@ -67,13 +79,16 @@ class Trainer(BaseTrainer):
             self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
             self.train_metrics.update('loss', loss.item())
             for met in self.metric_ftns:
-                if model_name == 'ViT1':
+                if label_name == 'gender':
                     self.train_metrics.update(
                         met.__name__, met(output, gender))
-                if model_name == 'ViT2':
+                elif label_name == 'age':
                     self.train_metrics.update(met.__name__, met(output, age))
-                if model_name == 'ViT3':
+                elif label_name == 'mask':
                     self.train_metrics.update(met.__name__, met(output, mask))
+                elif label_name == 'total':
+                    self.train_metrics.update(
+                        met.__name__, met(output, target))
 
             if batch_idx % self.log_step == 0:
                 self.logger.debug('Train Epoch: {} {} Loss: {:.6f}'.format(
@@ -96,43 +111,57 @@ class Trainer(BaseTrainer):
         return log
 
     def _valid_epoch(self, epoch):
+        """
+        Validate after training an epoch
+
+        :param epoch: Integer, current training epoch.
+        :return: A log that contains information about validation
+        """
         self.model.eval()
         self.valid_metrics.reset()
-        model_name = self.config['arch']['type']
+        label_name = self.config['arch']['args']['label_name']
         with torch.no_grad():
             for batch_idx, (data, target, gender, age, mask) in enumerate(self.valid_data_loader):
                 data = data.to(self.device)
-                if model_name == 'ViT1':
+                if label_name == 'gender':
                     gender = gender.to(self.device)
-                if model_name == 'ViT2':
+                elif label_name == 'age':
                     age = age.to(self.device)
-                if model_name == 'ViT3':
+                elif label_name == 'mask':
                     mask = mask.to(self.device)
+                elif label_name == 'total':
+                    target = target.to(self.device)
 
                 output = self.model(data)
-                if model_name == 'ViT1':
+                if label_name == 'gender':
                     loss = self.criterion(output, gender)
-                if model_name == 'ViT2':
+                elif label_name == 'age':
                     loss = self.criterion(output, age)
-                if model_name == 'ViT3':
+                elif label_name == 'mask':
                     loss = self.criterion(output, mask)
+                elif label_name == 'total':
+                    loss = self.criterion(output, target)
 
                 self.writer.set_step(
                     (epoch - 1) * len(self.valid_data_loader) + batch_idx, 'valid')
                 self.valid_metrics.update('loss', loss.item())
                 for met in self.metric_ftns:
-                    if model_name == 'ViT1':
+                    if label_name == 'gender':
                         self.valid_metrics.update(
                             met.__name__, met(output, gender))
-                    if model_name == 'ViT2':
+                    elif label_name == 'age':
                         self.valid_metrics.update(
                             met.__name__, met(output, age))
-                    if model_name == 'ViT3':
+                    elif label_name == 'mask':
                         self.valid_metrics.update(
                             met.__name__, met(output, mask))
+                    elif label_name == 'total':
+                        self.valid_metrics.update(
+                            met.__name__, met(output, target))
 
                 self.writer.add_image('input', make_grid(
                     data.cpu(), nrow=8, normalize=True))
+                torch.cuda.empty_cache()
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():

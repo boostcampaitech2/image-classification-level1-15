@@ -1,7 +1,6 @@
 import torch
 from sklearn.metrics import f1_score
 
-
 def accuracy(output, target):
     with torch.no_grad():
         pred = torch.argmax(output, dim=1)
@@ -21,25 +20,30 @@ def top_k_acc(output, target, k=3):
     return correct / len(target)
 
 
-def f1(output, target, is_training=False):
-    pred = torch.argmax(output, dim=1)
+# def f1(output, target, is_training=False):
+#     pred = torch.argmax(output, dim=1)
 
-    assert pred.ndim == 1
-    assert target.ndim == 1 or target.ndim == 2
+#     assert target.ndim == 1
+#     assert pred.ndim == 1 or pred.ndim == 2
 
-    if target.ndim == 2:
-        target = target.argmax(dim=1)
+#     if pred.ndim == 2:
+#         pred = pred.argmax(dim=1)
 
-    tp = (pred * target).sum().to(torch.float32)
-    fp = ((target - 1) * (target - 1)).sum().to(torch.float32)
-    tn = ((pred - 1) * target).sum().to(torch.float32)
-    fn = (pred * (target - 1)).sum().to(torch.float32)
+#     tp = (target * pred).sum().to(torch.float32)
+#     tn = ((1 - target) * (1 - pred)).sum().to(torch.float32)
+#     fp = ((1 - target) * pred).sum().to(torch.float32)
+#     fn = (target * (1 - pred)).sum().to(torch.float32)
 
-    epsilon = 1e-7
+#     epsilon = 1e-7
 
-    precision = tp / (tp + fp + epsilon)
-    recall = tp / (tp + fn + epsilon)
+#     precision = tp / (tp + fp + epsilon)
+#     recall = tp / (tp + fn + epsilon)
 
-    f1 = 2 * (precision * recall) / (precision + recall + epsilon)
-    f1.requires_grad = is_training
-    return f1
+#     f1 = 2 * (precision * recall) / (precision + recall + epsilon)
+#     f1.requires_grad = is_training
+#     return f1
+
+
+def f1(output, target):
+    output = output.argmax(dim=1)
+    return f1_score(target.cpu().numpy(), output.cpu().numpy(), average='macro')

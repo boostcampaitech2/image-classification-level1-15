@@ -1,0 +1,68 @@
+{
+    "name": "TTA",
+    "n_gpu": 1,
+    "save_directory_name": {
+        "gender": "GenderTTA",
+        "age": "AgeTTA",
+        "mask": "MaskTTA"
+    },
+    "arch": {
+        "type1": "Model",
+        "args1": {
+            "num_classes": 2,
+            "label_name": "gender",
+            "pretrained_model": "vit_base_patch16_384"
+        },
+        "type2": "Model",
+        "args2": {
+            "num_classes": 3,
+            "label_name": "age",
+            "pretrained_model": "vit_base_patch16_384"
+        },
+        "type3": "Model",
+        "args3": {
+            "num_classes": 3,
+            "label_name": "mask",
+            "pretrained_model": "vit_base_patch16_384"
+        }
+    },
+    "data_loader": {
+        "type": "MaskImageDataLoader",
+        "args": {
+            "data_dir": "data/input/data/",
+            "batch_size": 32,
+            "shuffle": true,
+            "validation_split": 0.2,
+            "num_workers": 4,
+            "csv_path": "data/train_csv_with_multi_labels.csv"
+        }
+    },
+    "optimizer": {
+        "type": "SGD",
+        "args": {
+            "lr": 0.0005,
+            "momentum": 0.9
+        }
+    },
+    "loss": "cross_entropy_loss",
+    "metrics": [
+        "accuracy",
+        "f1"
+    ],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 10,
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 2,
+        "tensorboard": true
+    }
+}

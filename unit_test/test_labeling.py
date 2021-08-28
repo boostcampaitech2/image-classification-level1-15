@@ -1,105 +1,24 @@
-import pandas as pd
-from torch.utils.data import Dataset
-from PIL import Image
-import numpy as np
 import os
-from torchvision import datasets, transforms
-import albumentations.pytorch
-
-# https://github.com/utkuozbulak/pytorch-custom-dataset-examples#incorporating-pandas
-
-
-class CustomDatasetFromImages(Dataset):
-    def __init__(self, data_dir, csv_path, transforms, train=True):
-        """
-        Args:
-            csv_path (string): path to csv file
-            img_path (string): path to the folder where images are
-            transform: pytorch transforms for transforms and tensor conversion
-        """
-        self.train = train
-
-        self.data_dir = data_dir + 'train/images/' if self.train else data_dir + 'eval/images/'
-        self.csv_path = csv_path if self.train else data_dir + 'eval/info.csv'
-
-        # Write CSV with Labeling
-        # 초기 한 번만 실행
-        # labeling = Labeling()
-        # labeling.write_train_csv_with_multi_labels()
-
-        # Transforms
-        self.transforms = transforms
-        # Read the csv file
-        self.data_info = pd.read_csv(self.csv_path)
-
-        if self.train:  # Train Dataset
-            # Image paths
-            self.image_arr = np.asarray(
-                self.data_dir + self.data_info['id'] + '_' +
-                self.data_info['gender'] + '_' +
-                self.data_info['race'] + '_' +
-                self.data_info['age'].astype(str) + '/' +
-                self.data_info['path'])
-            # Labels
-            self.label_arr = np.asarray(self.data_info['label'])
-            self.gender_label_arr = np.asarray(
-                self.data_info['gender_label'])  # gender_label
-            self.age_label_arr = np.asarray(
-                self.data_info['age_label'])  # age_label
-            self.mask_label_arr = np.asarray(
-                self.data_info['mask_label'])  # mask_label
-        else:
-            self.image_arr = np.asarray(
-                self.data_dir + self.data_info['ImageID'])
-
-        # Calculate len
-        self.data_len = len(self.data_info.index)
-
-    def __getitem__(self, index):
-        if self.train:
-            # Get image name from the pandas df
-            single_image_name = self.image_arr[index]
-            # Open image
-            img_as_img = np.array(Image.open(single_image_name))
-            # Transform image to tensor
-            if self.transforms is not None:
-                transform_image = self.transforms(image=img_as_img)
-            # Get label(class) of the image based on the cropped pandas column
-            single_image_label = self.label_arr[index]
-            single_gender_label = self.gender_label_arr[index]
-            single_age_label = self.age_label_arr[index]
-            single_mask_label = self.mask_label_arr[index]
-            return (transform_image['image'], single_image_label,
-                    single_gender_label, single_age_label, single_mask_label)
-        else:
-            # Get image name from the pandas df
-            single_image_name = self.image_arr[index]
-            # Open image
-            img_as_img = np.array(Image.open(single_image_name))
-            # Transform image to tensor
-            if self.transforms is not None:
-                transform_image = self.transforms(image=img_as_img)
-            return transform_image['image']
-
-    def __len__(self):
-        return self.data_len
+from unicodedata import category
+import pandas as pd
+from torch._C import dtype
 
 
-# """
-#        id  gender   race age                path  label  gender_label  age_label  mask_label
-# 0  000001  female  Asian  45           mask3.jpg      4             1          1           0
-# 1  000001  female  Asian  45           mask2.jpg      4             1          1           0
-# 2  000001  female  Asian  45           mask5.jpg      4             1          1           0
-# 3  000001  female  Asian  45           mask4.jpg      4             1          1           0
-# 4  000001  female  Asian  45  incorrect_mask.jpg     10             1          1           1
-# 5  000001  female  Asian  45          normal.jpg     16             1          1           2
-# 6  000001  female  Asian  45           mask1.jpg      4             1          1           0
-# """
+"""
+       id  gender   race age                path  label  gender_label  age_label  mask_label
+0  000001  female  Asian  45           mask3.jpg      4             1          1           0
+1  000001  female  Asian  45           mask2.jpg      4             1          1           0
+2  000001  female  Asian  45           mask5.jpg      4             1          1           0
+3  000001  female  Asian  45           mask4.jpg      4             1          1           0
+4  000001  female  Asian  45  incorrect_mask.jpg     10             1          1           1
+5  000001  female  Asian  45          normal.jpg     16             1          1           2
+6  000001  female  Asian  45           mask1.jpg      4             1          1           0
+"""
 
 
 class Labeling():
     def __init__(self):
-        self.train_csv_path = 'data/input/data/train'
+        self.train_csv_path = './input/data/train'
         self.train_csv = self.read_train_csv()
         self.columns = self.get_columns(self.train_csv)
         self.image_directory_names = self.parse_train_image_directory_names()
@@ -131,7 +50,7 @@ class Labeling():
 
     def make_train_csv_row(self, image_directory_name):
         image_path = os.path.join(
-            'data/input/data/train/images/' + image_directory_name)
+            self.train_csv_path, 'images/' + image_directory_name)
         files = os.listdir(image_path)
         row = [image_directory_name.split('_') for _ in range(len(files))]
 
@@ -201,10 +120,20 @@ class Labeling():
 
     def write_train_csv_with_labels(self):
         train_csv_with_labels = self.get_train_csv_with_labels()
-        train_csv_with_labels.to_csv(
-            'data/train_csv_with_labels.csv', index=False)
+        train_csv_with_labels.to_csv('train_csv_with_labels.csv', index=False)
 
-    def categorize_age(self, n):
+    """
+           id  gender   race age                path  label  gender_label  age_label mask_label
+    0  000001  female  Asian  45           mask3.jpg      4
+    1  000001  female  Asian  45           mask2.jpg      4
+    2  000001  female  Asian  45           mask5.jpg      4
+    3  000001  female  Asian  45           mask4.jpg      4
+    4  000001  female  Asian  45  incorrect_mask.jpg     10
+    5  000001  female  Asian  45          normal.jpg     16
+    6  000001  female  Asian  45           mask1.jpg      4
+    """
+
+    def age_categorize(self, n):
         if int(n) < 30:
             return 0
         elif 30 <= int(n) < 60:
@@ -212,7 +141,7 @@ class Labeling():
         elif int(n) >= 60:
             return 2
 
-    def categorize_mask(self, s):
+    def mask_categorize(self, s):
         if s.startswith('mask'):
             return 0
         elif s.startswith('incorrect'):
@@ -229,10 +158,10 @@ class Labeling():
             train_csv_with_labels['gender'] == 'female').astype(int)
 
         train_csv_with_multi_labels['age_label'] = train_csv_with_labels['age'].apply(
-            self.categorize_age)
+            self.age_categorize)
 
         train_csv_with_multi_labels['mask_label'] = train_csv_with_labels['path'].apply(
-            self.categorize_mask)
+            self.mask_categorize)
 
         print(train_csv_with_multi_labels.head(7))
         return train_csv_with_multi_labels
@@ -243,4 +172,17 @@ class Labeling():
     def write_train_csv_with_multi_labels(self):
         train_csv_with_multi_labels = self.get_train_csv_with_multi_labels()
         train_csv_with_multi_labels.to_csv(
-            'data/train_csv_with_multi_labels.csv', index=False)
+            'train_csv_with_multi_labels.csv', index=False)
+
+
+"""
+gender_label
+  - male = 0
+  - female = 1
+"""
+
+labeling = Labeling()
+
+labeling.write_train_csv_with_multi_labels()
+# a = pd.read_csv('train_csv_with_labels.csv')
+# print(a.head(7))

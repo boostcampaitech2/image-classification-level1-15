@@ -1,13 +1,13 @@
 {
-    "name": "outViT",
+    "name": "GenderTTA",
     "n_gpu": 1,
     "arch": {
-        "type": [
-            "ViT1",
-            "ViT2",
-            "ViT3"
-        ],
-        "args": {}
+        "type": "Model",
+        "args": {
+            "num_classes": 2,
+            "label_name": "gender",
+            "pretrained_model": "vit_base_patch16_384"
+        }
     },
     "data_loader": {
         "type": "MaskImageDataLoader",
@@ -40,7 +40,7 @@
         }
     },
     "trainer": {
-        "epochs": 3,
+        "epochs": 10,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
