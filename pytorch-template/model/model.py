@@ -14,8 +14,7 @@ class Model(BaseModel):
         super().__init__()
         self.pretrained_model = timm.create_model(
             pretrained_model, pretrained=True)
-        self.fc = nn.Linear(
-            self.pretrained_model.classifier.out_features, num_classes)
+        self.fc = nn.Linear(1000, num_classes)
 
     def forward(self, x):
         output = self.pretrained_model(x)
