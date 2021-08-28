@@ -3,3 +3,5 @@ input/
 __pycache__
 .ipynb_checkpoints
 saved/
+.vscode
+nohup.out
