@@ -3,7 +3,8 @@ import torch
 from torchvision.utils import make_grid
 from base import BaseTrainer
 from utils import inf_loop, MetricTracker
-
+import wandb
+wandb.init(project='maskclassification',entity = 'minji913',sync_tensorboard = True)
 
 class Trainer(BaseTrainer):
     """
@@ -13,9 +14,11 @@ class Trainer(BaseTrainer):
     def __init__(self, model, criterion, metric_ftns, optimizer, config, device,
                  data_loader, valid_data_loader=None, lr_scheduler=None, len_epoch=None):
         super().__init__(model, criterion, metric_ftns, optimizer, config)
+
         self.config = config
         self.device = device
         self.data_loader = data_loader
+        
         if len_epoch is None:
             # epoch-based training
             self.len_epoch = len(self.data_loader)
@@ -32,6 +35,12 @@ class Trainer(BaseTrainer):
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
         self.valid_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
+
+        wandb.config.update({'name':self.config['name'], 'label':self.config['arch']['args']['label_name'],
+                            'pretrained_model':self.config['arch']['args']['pretrained_model'],
+                            'batch_size':self.config['data_loader']['args']['batch_size'],
+                            'optimizer':self.config['optimizer']['type'],'loss':self.config['loss'],
+                            'lr':self.config['optimizer']['args']['lr'],'epoch': self.config['trainer']['epochs']})
 
     def _train_epoch(self, epoch):
         """

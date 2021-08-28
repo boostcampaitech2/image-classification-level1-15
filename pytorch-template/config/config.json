@@ -1,5 +1,5 @@
 {
-    "name": "GenderClf_aug",
+    "name": "test_aug",
     "n_gpu": 1,
     "arch": {
         "type": "Model",

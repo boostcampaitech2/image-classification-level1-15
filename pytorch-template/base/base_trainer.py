@@ -2,7 +2,7 @@ import torch
 from abc import abstractmethod
 from numpy import inf
 from logger import TensorboardWriter
-
+import wandb
 
 class BaseTrainer:
     """
@@ -42,6 +42,7 @@ class BaseTrainer:
         # setup visualization writer instance                
         self.writer = TensorboardWriter(config.log_dir, self.logger, cfg_trainer['tensorboard'])
 
+
         if config.resume is not None:
             self._resume_checkpoint(config.resume)
 
@@ -67,8 +68,11 @@ class BaseTrainer:
             log.update(result)
 
             # print logged informations to the screen
+            log_for_wandb = {}
             for key, value in log.items():
                 self.logger.info('    {:15s}: {}'.format(str(key), value))
+                log_for_wandb[str(key)]=value
+            wandb.log(log_for_wandb)
 
             # evaluate model performance according to configured metric, save best checkpoint as model_best
             best = False

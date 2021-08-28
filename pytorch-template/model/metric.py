@@ -20,30 +20,6 @@ def top_k_acc(output, target, k=3):
     return correct / len(target)
 
 
-def f1(output, target, is_training=False):
-    '''
-    pred = torch.argmax(output, dim=1)
-
-    assert target.ndim == 1
-    assert pred.ndim == 1 or pred.ndim == 2
-
-    if pred.ndim == 2:
-        pred = pred.argmax(dim=1)
-
-    tp = (target * pred).sum().to(torch.float32)
-    tn = ((1 - target) * (1 - pred)).sum().to(torch.float32)
-    fp = ((1 - target) * pred).sum().to(torch.float32)
-    fn = (target * (1 - pred)).sum().to(torch.float32)
-
-    epsilon = 1e-7
-
-    precision = tp / (tp + fp + epsilon)
-    recall = tp / (tp + fn + epsilon)
-
-    f1 = 2 * (precision * recall) / (precision + recall + epsilon)
-    f1.requires_grad = is_training
-    '''
-
-    f1_score(target, output, average = 'macro')
-    return f1
-    
+def f1(output, target):
+    output = output.argmax(dim=1)
+    return f1_score(target.cpu().numpy(), output.cpu().numpy(), average='macro')
