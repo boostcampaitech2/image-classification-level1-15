@@ -23,11 +23,11 @@ def top_k_acc(output, target, k=3):
 def f1(output, target, is_training=False):
     pred = torch.argmax(output, dim=1)
 
-    assert pred.ndim == 1
-    assert target.ndim == 1 or target.ndim == 2
+    assert target.ndim == 1
+    assert pred.ndim == 1 or pred.ndim == 2
 
-    if target.ndim == 2:
-        target = target.argmax(dim=1)
+    if pred.ndim == 2:
+        pred = pred.argmax(dim=1)
 
     tp = (target * pred).sum().to(torch.float32)
     tn = ((1 - target) * (1 - pred)).sum().to(torch.float32)
@@ -42,3 +42,4 @@ def f1(output, target, is_training=False):
     f1 = 2 * (precision * recall) / (precision + recall + epsilon)
     f1.requires_grad = is_training
     return f1
+    
