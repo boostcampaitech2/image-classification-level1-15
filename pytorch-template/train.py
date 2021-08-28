@@ -9,8 +9,7 @@ import model.model as module_arch
 from parse_config import ConfigParser
 from trainer import Trainer
 from utils import prepare_device
-from custom_dataset import CustomDatasetFromImages
-
+from custom_dataset import CustomDatasetFromImages, CustomValidDatasetFromImages
 
 # fix random seeds for reproducibility
 SEED = 123
@@ -25,7 +24,7 @@ def main(config):
 
     # setup data_loader instances
     data_loader = config.init_obj('data_loader', module_data)
-    valid_data_loader = data_loader.split_validation()
+    valid_data_loader = config.init_obj('valid_data_loader', module_data)
 
     # build model architecture, then print to console
     model = config.init_obj('arch', module_arch)
