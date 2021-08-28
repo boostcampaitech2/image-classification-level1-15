@@ -1,5 +1,5 @@
 import torch
-
+from sklearn.metrics import f1_score
 
 def accuracy(output, target):
     with torch.no_grad():
@@ -21,6 +21,7 @@ def top_k_acc(output, target, k=3):
 
 
 def f1(output, target, is_training=False):
+    '''
     pred = torch.argmax(output, dim=1)
 
     assert target.ndim == 1
@@ -41,5 +42,8 @@ def f1(output, target, is_training=False):
 
     f1 = 2 * (precision * recall) / (precision + recall + epsilon)
     f1.requires_grad = is_training
+    '''
+
+    f1_score(target, output, average = 'macro')
     return f1
     
