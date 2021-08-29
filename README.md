@@ -77,3 +77,6 @@ self.test_augmentations_all = [
     self.autocontrast, self.equalize, self.posterize, self.rotate, self.solarize, self.shear_x
 ]
 ```
+
+또한 Evaluation 시 Tensorboard에 이미지들을 기록하게 해두었으니 확인 바랍니다!
+- 현재 TTA_Evaluation 이란 이름으로 로그 생성
