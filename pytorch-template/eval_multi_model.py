@@ -9,10 +9,10 @@ from parse_config import ConfigParser
 import pandas as pd
 from torchvision import models
 import os
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
+import albumentations.pytorch
 import numpy as np
-import matplotlib.pyplot as plt
-from torchvision.utils import make_grid
-from logger import TensorboardWriter
 
 
 def init_models(config):
@@ -25,7 +25,7 @@ def init_models(config):
 
 
 def get_latest_saved_model_paths(config):
-    checkpoint_path = "/opt/ml/level1-15/pytorch-template/saved/models/"
+    checkpoint_path = "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/"
     save_paths = [
         checkpoint_path + config['save_directory_name']['gender'],
         checkpoint_path + config['save_directory_name']['age'],
@@ -57,34 +57,74 @@ def get_saved_model_state_dict(latest_saved_model_paths):
     return [state_dict1, state_dict2, state_dict3]
 
 
-def TTA(model1, model2, model3, images, device):
+def test_time_augmentation(model1, model2, model3, images):
+    # print(f'here >>>>>>> {images.shape} {len(images)}')
+    # images = [batch_size, (channel RGB 3 * total aug num), W, H]
+    images = torch.split(images, 3, dim=1)
+    # after split images = [64, 3, 384, 384]
+    # print(f'here ****************** {images[0].shape} {len(images)}')
     for i in range(len(images)):
         if i == 0:
-            preds_gender = model1(images[i].to(device)).to(device)
-            preds_age = model2(images[i].to(device)).to(device)
-            preds_mask = model3(images[i].to(device)).to(device)
+            preds_gender = model1(images[i])
+            preds_age = model2(images[i])
+            preds_mask = model3(images[i])
+            # print(f'in progress {images[i]} {preds_gender.shape}')
         else:
-            pred_gender = model1(images[i].to(device)).to(device)
-            pred_age = model2(images[i].to(device)).to(device)
-            pred_mask = model3(images[i].to(device)).to(device)
+            pred_gender = model1(images[i])
+            pred_age = model2(images[i])
+            pred_mask = model3(images[i])
 
+            preds_mask = torch.cat((preds_mask, pred_mask), dim=0)
             preds_gender = torch.cat((preds_gender, pred_gender), dim=0)
             preds_age = torch.cat((preds_age, pred_age), dim=0)
-            preds_mask = torch.cat((preds_mask, pred_mask), dim=0)
 
     return torch.mean(preds_gender, dim=0), torch.mean(preds_age, dim=0), torch.mean(preds_mask, dim=0)
 
 
+class EvalDataset(Dataset):
+    def __init__(self, img_paths, augs, transform):
+        self.img_paths = img_paths
+        self.augs = augs
+        self.transform = transform
+
+    def __getitem__(self, index):
+        image = Image.open(self.img_paths[index])
+        for i in range(len(self.augs) + 1):
+            if i == 0:
+                images = self.transform(image=np.array(image))['image']
+            else:
+                image = self.augs[i - 1](image=np.array(image))['image']
+                images = torch.cat(
+                    (images, self.transform(image=image)['image']), dim=0)
+        return images
+
+    def __len__(self):
+        return len(self.img_paths)
+
+
 def main(config):
-    data_loader = getattr(module_data, config['data_loader']['type'])(
-        config['data_loader']['args']['data_dir'],
-        batch_size=64,
-        shuffle=False,
-        validation_split=0.0,
-        training=False,
-        num_workers=2,
-        csv_path=config['data_loader']['args']['csv_path'],
-    )
+    test_dir = './data/input/data/eval'
+    image_dir = os.path.join(test_dir, 'images')
+    submission = pd.read_csv(os.path.join(test_dir, 'info.csv'))
+    # Test Dataset 클래스 객체를 생성하고 DataLoader를 만듭니다.
+    image_paths = [os.path.join(image_dir, img_id)
+                   for img_id in submission.ImageID]
+    transform = albumentations.Compose([
+        albumentations.Resize(384, 384),
+        albumentations.Normalize(
+            mean=(0.560, 0.524, 0.501), std=(0.233, 0.243, 0.245)),
+        albumentations.pytorch.transforms.ToTensorV2()
+    ])
+    augs = [
+        albumentations.HorizontalFlip(),
+        albumentations.ColorJitter(brightness=(0.2, 2), contrast=(
+            0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3)),
+        albumentations.Normalize(
+            mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
+        albumentations.CenterCrop(384, 384)
+    ]
+    testset = EvalDataset(image_paths, augs, transform)
+    data_loader = DataLoader(testset, batch_size=64, shuffle=False)
 
     print()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -107,40 +147,41 @@ def main(config):
     model2.eval()
     model3.eval()
 
-    submission = pd.read_csv(
-        config['data_loader']['args']['data_dir'] + 'eval/info.csv')
-
-    logger = config.get_logger('trainer', config['trainer']['verbosity'])
-    writer = TensorboardWriter(config.log_dir, logger, 'true')
+    # submission = pd.read_csv(
+    #     config['data_loader']['args']['data_dir'] + 'eval/info.csv')
 
     gender_preds = []
     age_preds = []
     mask_preds = []
+
     with torch.no_grad():
         for i, images in enumerate(tqdm(data_loader)):
-            pred_gender, pred_age, pred_mask = TTA(
-                model1, model2, model3, images, device)
-            gender_preds.append(pred_gender.cpu().numpy())
-            age_preds.append(pred_age.cpu().numpy())
-            mask_preds.append(pred_mask.cpu().numpy())
+            images = images.to(device)
 
-            writer.add_image('input', make_grid(
-                images[0].cpu(), nrow=8, normalize=True))
-            writer.add_image('input', make_grid(
-                images[1].cpu(), nrow=8, normalize=True))
-            writer.add_image('input', make_grid(
-                images[2].cpu(), nrow=8, normalize=True))
+            pred_gender, pred_age, pred_mask = test_time_augmentation(
+                model1, model2, model3, images)
+            # print(f'shape !!!!!!! {pred_gender.shape}')
+            pred1 = pred_gender.argmax(dim=-1)
+            pred2 = pred_age.argmax(dim=-1)
+            pred3 = pred_mask.argmax(dim=-1)
 
-    pred_gender = np.mean(gender_preds, axis=0)
-    pred_mask = np.mean(mask_preds, axis=0)
-    pred_age = np.mean(age_preds, axis=0)
+            gender_preds.append(pred1.cpu().numpy())
+            age_preds.append(pred2.cpu().numpy())
+            mask_preds.append(pred3.cpu().numpy())
 
-    pred_mask = pred_mask.argmax(axis=-1)
-    pred_gender = pred_gender.argmax(axis=-1)
-    pred_age = pred_age.argmax(axis=-1)
+            # if i == 2:
+            #     break
+    CLASS_DICT = {
+        '000': 0, '001': 1, '002': 2, '010': 3, '011': 4, '012': 5,
+        '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
+        '200': 12, '201': 13, '202': 14, '210': 15, '211': 16, '212': 17
+    }
 
-    all_predictions = pred_mask * 6 + pred_gender * 3 + pred_age
-    submission['ans'] = all_predictions
+    preds = zip(gender_preds, age_preds, mask_preds)
+    labels = [CLASS_DICT[''.join(map(str, [mask, gender, age]))]
+              for gender, age, mask in preds]
+
+    submission['ans'] = labels
     submission.to_csv('submission.csv', index=False)
 
 
