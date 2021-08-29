@@ -9,6 +9,10 @@ from parse_config import ConfigParser
 import pandas as pd
 from torchvision import models
 import os
+import numpy as np
+import matplotlib.pyplot as plt
+from torchvision.utils import make_grid
+from logger import TensorboardWriter
 
 
 def init_models(config):
@@ -21,7 +25,7 @@ def init_models(config):
 
 
 def get_latest_saved_model_paths(config):
-    checkpoint_path = "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/"
+    checkpoint_path = "/opt/ml/level1-15/pytorch-template/saved/models/"
     save_paths = [
         checkpoint_path + config['save_directory_name']['gender'],
         checkpoint_path + config['save_directory_name']['age'],
@@ -51,6 +55,24 @@ def get_saved_model_state_dict(latest_saved_model_paths):
     state_dict3 = checkpoint3['state_dict']
 
     return [state_dict1, state_dict2, state_dict3]
+
+
+def TTA(model1, model2, model3, images, device):
+    for i in range(len(images)):
+        if i == 0:
+            preds_gender = model1(images[i].to(device)).to(device)
+            preds_age = model2(images[i].to(device)).to(device)
+            preds_mask = model3(images[i].to(device)).to(device)
+        else:
+            pred_gender = model1(images[i].to(device)).to(device)
+            pred_age = model2(images[i].to(device)).to(device)
+            pred_mask = model3(images[i].to(device)).to(device)
+
+            preds_gender = torch.cat((preds_gender, pred_gender), dim=0)
+            preds_age = torch.cat((preds_age, pred_age), dim=0)
+            preds_mask = torch.cat((preds_mask, pred_mask), dim=0)
+
+    return torch.mean(preds_age, dim=0), torch.mean(preds_gender, dim=0), torch.mean(preds_mask, dim=0)
 
 
 def main(config):
@@ -88,38 +110,37 @@ def main(config):
     submission = pd.read_csv(
         config['data_loader']['args']['data_dir'] + 'eval/info.csv')
 
-    gender_pred = []
-    age_pred = []
-    mask_pred = []
+    logger = config.get_logger('trainer', config['trainer']['verbosity'])
+    writer = TensorboardWriter(config.log_dir, logger, 'true')
+
+    gender_preds = []
+    age_preds = []
+    mask_preds = []
     with torch.no_grad():
-        for i, image in enumerate(tqdm(data_loader)):
-            image = image.to(device)
+        for i, images in enumerate(tqdm(data_loader)):
+            pred_gender, pred_age, pred_mask = TTA(
+                model1, model2, model3, images, device)
+            gender_preds.append(pred_gender.cpu().numpy())
+            age_preds.append(pred_age.cpu().numpy())
+            mask_preds.append(pred_mask.cpu().numpy())
 
-            # 0:male, 1:female
-            output1 = model1(image)
-            # 0: age < 30, 1: 30 <= age < 60, 2: 60 <= age
-            output2 = model2(image)
-            # 0: mask, 2: incorrect, 3: normal
-            output3 = model3(image)  # 마스크 착용여부
+            writer.add_image('input', make_grid(
+                images[0].cpu(), nrow=8, normalize=True))
+            writer.add_image('input', make_grid(
+                images[1].cpu(), nrow=8, normalize=True))
+            writer.add_image('input', make_grid(
+                images[2].cpu(), nrow=8, normalize=True))
 
-            pred1 = output1.argmax(dim=-1)
-            pred2 = output2.argmax(dim=-1)
-            pred3 = output3.argmax(dim=-1)
+    pred_gender = np.mean(gender_preds, axis=0)
+    pred_mask = np.mean(mask_preds, axis=0)
+    pred_age = np.mean(age_preds, axis=0)
 
-            gender_pred.extend(pred1.cpu().numpy())
-            age_pred.extend(pred2.cpu().numpy())
-            mask_pred.extend(pred3.cpu().numpy())
+    pred_mask = pred_mask.argmax(axis=-1)
+    pred_gender = pred_gender.argmax(axis=-1)
+    pred_age = pred_age.argmax(axis=-1)
 
-    CLASS_DICT = {
-        '000': 0, '001': 1, '002': 2, '010': 3, '011': 4, '012': 5,
-        '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
-        '200': 12, '201': 13, '202': 14, '210': 15, '211': 16, '212': 17
-    }
-
-    preds = zip(gender_pred, age_pred, mask_pred)
-    labels = [CLASS_DICT[''.join(map(str, [mask, gender, age]))]
-              for gender, age, mask in preds]
-    submission['ans'] = labels
+    all_predictions = pred_mask * 6 + pred_gender * 3 + pred_age
+    submission['ans'] = all_predictions
     submission.to_csv('submission.csv', index=False)
 
 
