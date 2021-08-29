@@ -1,5 +1,5 @@
 {
-    "name": "AgeClf_augdown_b1",
+    "name": "AgeClf_lr_b1",
     "n_gpu": 1,
     "arch": {
         "type": "Model",
@@ -51,12 +51,12 @@
         }
     },
     "trainer": {
-        "epochs": 10,
+        "epochs": 12,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
         "monitor": "min val_loss",
-        "early_stop": 2,
+        "early_stop": 5,
         "tensorboard": true
     }
 }

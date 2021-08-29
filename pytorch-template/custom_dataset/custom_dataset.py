@@ -147,7 +147,13 @@ class CustomValidDatasetFromImages(Dataset):
 
         self.image_arr = np.asarray(
             self.data_dir + self.data_info['folder'] + '/' + self.data_info['path'])
-
+        self.label_arr = np.asarray(self.data_info['label'])
+        self.gender_label_arr = np.asarray(
+            self.data_info['gender_label'])
+        self.age_label_arr = np.asarray(
+            self.data_info['age_label'])
+        self.mask_label_arr = np.asarray(
+            self.data_info['mask_label'])
         self.data_len = len(self.data_info.index)
 
     def __getitem__(self, index):
