@@ -1,5 +1,5 @@
 {
-    "name": "GenderClf_augdown_b1",
+    "name": "GenderClf_adamw_b1",
     "n_gpu": 1,
     "arch": {
         "type": "Model",
@@ -13,7 +13,7 @@
         "type": "MaskImageDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 64,
+            "batch_size": 32,
             "shuffle": true,
             "validation_split": 0.0,
             "num_workers": 2,
@@ -24,7 +24,7 @@
         "type": "MaskImageValidDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 64,
+            "batch_size": 32,
             "shuffle": false,
             "validation_split": 0.0,
             "num_workers": 2,
@@ -32,10 +32,11 @@
         }
     },
     "optimizer": {
-        "type": "SGD",
+        "type": "AdamW",
         "args": {
-            "lr": 0.01,
-            "momentum": 0.9
+            "lr": 0.001,
+            "weight_decay": 5e-4,
+            "amsgrad": true
         }
     },
     "loss": "cross_entropy_loss",
@@ -51,12 +52,12 @@
         }
     },
     "trainer": {
-        "epochs": 10,
+        "epochs": 30,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
         "monitor": "min val_loss",
-        "early_stop": 4,
+        "early_stop": 10,
         "tensorboard": true
     }
 }

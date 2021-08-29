@@ -13,7 +13,7 @@
         "type": "MaskImageDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 64,
+            "batch_size": 32,
             "shuffle": true,
             "validation_split": 0.0,
             "num_workers": 2,
@@ -32,10 +32,11 @@
         }
     },
     "optimizer": {
-        "type": "SGD",
+        "type": "AdamW",
         "args": {
-            "lr": 0.01,
-            "momentum": 0.9
+            "lr": 0.001,
+            "weight_decay": 5e-4,
+            "amsgrad": true
         }
     },
     "loss": "cross_entropy_loss",
