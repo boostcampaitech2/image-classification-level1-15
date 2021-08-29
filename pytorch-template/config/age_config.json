@@ -13,7 +13,7 @@
         "type": "MaskImageDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 128,
+            "batch_size": 64,
             "shuffle": true,
             "validation_split": 0.0,
             "num_workers": 4,
@@ -24,7 +24,7 @@
         "type": "MaskImageValidDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 128,
+            "batch_size": 64,
             "shuffle": false,
             "validation_split": 0.0,
             "num_workers": 4,

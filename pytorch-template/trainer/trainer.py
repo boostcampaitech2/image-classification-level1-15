@@ -3,6 +3,7 @@ import torch
 from torchvision.utils import make_grid
 from base import BaseTrainer
 from utils import inf_loop, MetricTracker
+import torch.nn.functional as F
 
 
 class Trainer(BaseTrainer):
@@ -43,9 +44,12 @@ class Trainer(BaseTrainer):
         self.model.train()
         self.train_metrics.reset()
         label_name = self.config['arch']['args']['label_name']
-        for batch_idx, (data, target, gender, age, mask) in enumerate(self.data_loader):
+        for batch_idx, (images, target, gender, age, mask) in enumerate(self.data_loader):
+            images_all = torch.cat(images, 0).to(self.device)
+            logits_all = self.model(images_all)
+            logits_clean, logits_aug1, logits_aug2 = torch.split(
+                logits_all, images[0].size(0))
 
-            data = data.to(self.device)
             if label_name == 'gender':
                 gender = gender.to(self.device)
             elif label_name == 'age':
@@ -56,21 +60,33 @@ class Trainer(BaseTrainer):
                 target = target.to(self.device)
 
             self.optimizer.zero_grad()
-            output = self.model(data)
+
             if label_name == 'gender':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1.5, 1.0]).to(self.device))
-                loss = self.criterion(output, gender)
+                loss = self.criterion(logits_clean, gender)
             elif label_name == 'age':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1., 1., 6.]).to(self.device))
-                loss = self.criterion(output, age)
+                loss = self.criterion(logits_clean, age)
             elif label_name == 'mask':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1., 2., 2.]).to(self.device))
-                loss = self.criterion(output, mask)
+                loss = self.criterion(logits_clean, mask)
             elif label_name == 'total':
-                loss = self.criterion(output, mask)
+                loss = self.criterion(logits_clean, mask)
+
+            p_clean, p_aug1, p_aug2 = F.softmax(
+                logits_clean, dim=1), F.softmax(
+                    logits_aug1, dim=1), F.softmax(
+                        logits_aug2, dim=1)
+
+            p_mixture = torch.clamp(
+                (p_clean + p_aug1 + p_aug2) / 3., 1e-7, 1).log()
+            loss += 12 * (F.kl_div(p_mixture, p_clean, reduction='batchmean') +
+                          F.kl_div(p_mixture, p_aug1, reduction='batchmean') +
+                          F.kl_div(p_mixture, p_aug2, reduction='batchmean')) / 3.
+
             loss.backward()
             self.optimizer.step()
 
@@ -79,14 +95,16 @@ class Trainer(BaseTrainer):
             for met in self.metric_ftns:
                 if label_name == 'gender':
                     self.train_metrics.update(
-                        met.__name__, met(output, gender))
+                        met.__name__, met(logits_clean, gender))
                 elif label_name == 'age':
-                    self.train_metrics.update(met.__name__, met(output, age))
+                    self.train_metrics.update(
+                        met.__name__, met(logits_clean, age))
                 elif label_name == 'mask':
-                    self.train_metrics.update(met.__name__, met(output, mask))
+                    self.train_metrics.update(
+                        met.__name__, met(logits_clean, mask))
                 elif label_name == 'total':
                     self.train_metrics.update(
-                        met.__name__, met(output, target))
+                        met.__name__, met(logits_clean, target))
 
             if batch_idx % self.log_step == 0:
                 self.logger.debug('Train Epoch: {} {} Loss: {:.6f}'.format(
@@ -94,7 +112,7 @@ class Trainer(BaseTrainer):
                     self._progress(batch_idx),
                     loss.item()))
                 self.writer.add_image('input', make_grid(
-                    data.cpu(), nrow=8, normalize=True))
+                    images_all.cpu(), nrow=8, normalize=True))
 
             if batch_idx == self.len_epoch:
                 break
@@ -119,8 +137,9 @@ class Trainer(BaseTrainer):
         self.valid_metrics.reset()
         label_name = self.config['arch']['args']['label_name']
         with torch.no_grad():
-            for batch_idx, (data, target, gender, age, mask) in enumerate(self.valid_data_loader):
-                data = data.to(self.device)
+            for batch_idx, (images, target, gender, age, mask) in enumerate(self.valid_data_loader):
+                images = images.to(self.device)
+
                 if label_name == 'gender':
                     gender = gender.to(self.device)
                 elif label_name == 'age':
@@ -130,7 +149,8 @@ class Trainer(BaseTrainer):
                 elif label_name == 'total':
                     target = target.to(self.device)
 
-                output = self.model(data)
+                output = self.model(images)
+
                 if label_name == 'gender':
                     loss = self.criterion(output, gender)
                 elif label_name == 'age':
@@ -158,7 +178,7 @@ class Trainer(BaseTrainer):
                             met.__name__, met(output, target))
 
                 self.writer.add_image('input', make_grid(
-                    data.cpu(), nrow=8, normalize=True))
+                    images.cpu(), nrow=8, normalize=True))
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():

@@ -6,16 +6,10 @@ import albumentations as A
 
 
 class MaskImageDataLoader(BaseDataLoader):
-    def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.0, num_workers=2, training=True):
+    def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.2, num_workers=2, training=True):
         self.transform = A.Compose([
-            A.ColorJitter(brightness=(0.2, 2), contrast=(
-                0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3)),
-            A.HorizontalFlip(),
-            A.augmentations.transforms.ToGray(),
-            A.Resize(224, 224),
-            A.Normalize(
-                mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
-            ToTensorV2()
+            A.RandomResizedCrop(224, 224),
+            A.HorizontalFlip()
         ])
         self.data_dir = data_dir
         self.csv_path = csv_path
@@ -31,7 +25,7 @@ class MaskImageValidDataLoader(BaseDataLoader):
         self.transform = A.Compose([
             A.Resize(224, 224),
             A.Normalize(
-                mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
+                mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             ToTensorV2()
         ])
         self.data_dir = data_dir
