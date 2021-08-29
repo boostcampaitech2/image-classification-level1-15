@@ -72,7 +72,7 @@ def TTA(model1, model2, model3, images, device):
             preds_age = torch.cat((preds_age, pred_age), dim=0)
             preds_mask = torch.cat((preds_mask, pred_mask), dim=0)
 
-    return torch.mean(preds_age, dim=0), torch.mean(preds_gender, dim=0), torch.mean(preds_mask, dim=0)
+    return torch.mean(preds_gender, dim=0), torch.mean(preds_age, dim=0), torch.mean(preds_mask, dim=0)
 
 
 def main(config):
