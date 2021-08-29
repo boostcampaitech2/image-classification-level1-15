@@ -2,9 +2,9 @@
     "name": "GenderClassificationEfficientnet",
     "n_gpu": 1,
     "save_directory_name": {
-        "gender": "GenderClf_aug",
-        "age": "AgeClf_aug",
-        "mask": "MaskClf_aug"
+        "gender": "GenderClf_augdown_b1",
+        "age": "AgeClf_augdown_b1",
+        "mask": "MaskClf_augdown_b1"
     },
     "arch": {
         "type1": "Model",

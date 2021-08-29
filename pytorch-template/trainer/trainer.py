@@ -3,6 +3,7 @@ import torch
 from torchvision.utils import make_grid
 from base import BaseTrainer
 from utils import inf_loop, MetricTracker
+
 import wandb
 wandb.init(project='maskclassification',entity = 'minji913',sync_tensorboard = True)
 
@@ -40,7 +41,8 @@ class Trainer(BaseTrainer):
                             'pretrained_model':self.config['arch']['args']['pretrained_model'],
                             'batch_size':self.config['data_loader']['args']['batch_size'],
                             'optimizer':self.config['optimizer']['type'],'loss':self.config['loss'],
-                            'lr':self.config['optimizer']['args']['lr'],'epoch': self.config['trainer']['epochs']})
+                            'lr':self.config['optimizer']['args']['lr'],'epoch': self.config['trainer']['epochs'],
+                            'cutface':True})
 
     def _train_epoch(self, epoch):
         """

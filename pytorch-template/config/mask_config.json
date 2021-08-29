@@ -1,5 +1,5 @@
 {
-    "name": "MaskClf_aug",
+    "name": "MaskClf_augdown_b1",
     "n_gpu": 1,
     "arch": {
         "type": "Model",
@@ -15,9 +15,20 @@
             "data_dir": "data/input/data/",
             "batch_size": 64,
             "shuffle": true,
-            "validation_split": 0.2,
-            "num_workers": 3,
-            "csv_path": "data/train_csv_with_multi_labels.csv"
+            "validation_split": 0.0,
+            "num_workers": 1,
+            "csv_path": "data/splitted_train_csv_20.csv"
+        }
+    },
+    "valid_data_loader": {
+        "type": "MaskImageValidDataLoader",
+        "args": {
+            "data_dir": "data/input/data/",
+            "batch_size": 64,
+            "shuffle": false,
+            "validation_split": 0.0,
+            "num_workers": 2,
+            "csv_path": "data/splitted_valid_csv_20.csv"
         }
     },
     "optimizer": {

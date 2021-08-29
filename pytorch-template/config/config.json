@@ -4,8 +4,8 @@
     "arch": {
         "type": "Model",
         "args": {
-            "num_classes": 2,
-            "label_name": "gender",
+            "num_classes": 3,
+            "label_name": "age",
             "pretrained_model": "efficientnet_b1"
         }
     },
@@ -15,9 +15,20 @@
             "data_dir": "data/input/data/",
             "batch_size": 64,
             "shuffle": true,
-            "validation_split": 0.2,
-            "num_workers": 3,
-            "csv_path": "data/train_csv_with_multi_labels.csv"
+            "validation_split": 0.0,
+            "num_workers": 2,
+            "csv_path": "data/splitted_train_csv_20.csv"
+        }
+    },
+    "valid_data_loader": {
+        "type": "MaskImageValidDataLoader",
+        "args": {
+            "data_dir": "data/input/data/",
+            "batch_size": 64,
+            "shuffle": false,
+            "validation_split": 0.0,
+            "num_workers": 2,
+            "csv_path": "data/splitted_valid_csv_20.csv"
         }
     },
     "optimizer": {
