@@ -32,7 +32,7 @@
             "data_dir": "data/input/data/",
             "batch_size": 64,
             "shuffle": true,
-            "validation_split": 0.2,
+            "validation_split": 0.0,
             "num_workers": 2,
             "csv_path": "data/train_csv_with_multi_labels.csv"
         }
@@ -41,7 +41,7 @@
         "type": "MaskImageValidDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 128,
+            "batch_size": 64,
             "shuffle": false,
             "validation_split": 0.0,
             "num_workers": 4,

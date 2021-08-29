@@ -53,6 +53,14 @@ class CustomDatasetFromImages(Dataset):
             self.translate_x, self.translate_y, self.color, self.contrast, self.brightness, self.sharpness
         ]
 
+        self.test_augmentations = [
+            self.autocontrast, self.translate_x, self.rotate
+        ]
+
+        self.test_augmentations_all = [
+            self.autocontrast, self.equalize, self.posterize, self.rotate, self.solarize, self.shear_x
+        ]
+
         self.IMAGE_SIZE = 224
         self.mixture_width = 3
         self.mixture_depth = -1
@@ -95,13 +103,13 @@ class CustomDatasetFromImages(Dataset):
             # Transform image to tensor
             if self.transform is not None:
                 im_tuple = (self.preprocess(image=img_as_np)['image'], self.aug(
-                    img_as_img, self.preprocess), self.aug(img_as_img, self.preprocess, all_ops=True))
+                    img_as_img, self.preprocess, train=False), self.aug(img_as_img, self.preprocess, all_ops=True, train=False))
             return im_tuple
 
     def __len__(self):
         return self.data_len
 
-    def aug(self, image, preprocess, all_ops=False):
+    def aug(self, image, preprocess, all_ops=False, train=True):
         """Perform AugMix augmentations and compute mixture.
         Args:
         image: PIL.Image input image
@@ -109,9 +117,14 @@ class CustomDatasetFromImages(Dataset):
         Returns:
         mixed: Augmented and mixed image.
         """
-        aug_list = self.augmentations
-        if all_ops:
-            aug_list = self.augmentations_all
+        if train:
+            aug_list = self.augmentations
+            if all_ops:
+                aug_list = self.augmentations_all
+        else:
+            aug_list = self.test_augmentations
+            if all_ops:
+                aug_list = self.test_augmentations_all
 
         ws = np.float32(np.random.dirichlet([1] * self.mixture_width))
         m = np.float32(np.random.beta(1, 1))
