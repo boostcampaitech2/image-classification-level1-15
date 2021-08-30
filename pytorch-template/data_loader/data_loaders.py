@@ -5,7 +5,6 @@ from custom_dataset import *
 from albumentations.pytorch import ToTensorV2
 import albumentations as A
 
-
 transform_list = [
     A.Compose([
         A.CenterCrop(height=358, width=268, p=1),
@@ -102,7 +101,7 @@ class MaskImageDataLoader(BaseDataLoader):
         # ])
         self.transform = A.Compose([
             A.OneOf(transform_list, p=0.5),
-            A.Resize(224, 224),
+            A.Resize(300, 300),
             A.HorizontalFlip(),
             A.Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
             ToTensorV2()
@@ -113,13 +112,15 @@ class MaskImageDataLoader(BaseDataLoader):
         # d_type, resize, data_dir, csv_path, transforms, train
         self.dataset = CustomDatasetFromImages(
             self.data_dir, self.csv_path, self.transform, train=training)
+
+        self.dataset = DataAdasyn(self.dataset)
         super().__init__(self.dataset, batch_size, shuffle, validation_split, num_workers)
 
 
 class MaskImageValidDataLoader(BaseDataLoader):
     def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.0, num_workers=2, training=False):
         self.transform = A.Compose([
-            A.Resize(224, 224),
+            A.Resize(300, 300),
             A.Normalize(
                 mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
             ToTensorV2()

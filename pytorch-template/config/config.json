@@ -16,7 +16,7 @@
             "batch_size": 128,
             "shuffle": true,
             "validation_split": 0.0,
-            "num_workers": 4,
+            "num_workers": 2,
             "csv_path": "data/splitted_train_csv_20.csv"
         }
     },
@@ -27,7 +27,7 @@
             "batch_size": 128,
             "shuffle": false,
             "validation_split": 0.0,
-            "num_workers": 4,
+            "num_workers": 2,
             "csv_path": "data/splitted_valid_csv_20.csv"
         }
     },

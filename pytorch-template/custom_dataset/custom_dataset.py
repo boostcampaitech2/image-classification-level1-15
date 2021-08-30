@@ -7,6 +7,8 @@ from torchvision import datasets, transforms
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import torch
+from imblearn.over_samplng import ADASYN
+
 # https://github.com/utkuozbulak/pytorch-custom-dataset-examples#incorporating-pandas
 
 
@@ -42,17 +44,6 @@ class CustomDatasetFromImages(Dataset):
             self.mask_label_arr = np.append(np.asarray(
                 self.data_info['mask_label']), np.asarray(self.crop_data_info['mask_label']))  # mask_label
 
-            # # Image paths
-            # self.image_arr = np.asarray(
-            #     self.data_dir + self.data_info['folder'] + '/' + self.data_info['path'])
-            # # Labels
-            # self.label_arr = np.asarray(self.data_info['label'])
-            # self.gender_label_arr = np.asarray(
-            #     self.data_info['gender_label'])  # gender_label
-            # self.age_label_arr = np.asarray(
-            #     self.data_info['age_label'])  # age_label
-            # self.mask_label_arr = np.asarray(
-            #     self.data_info['mask_label'])  # mask_label
         else:
             eval_crop_data_info = pd.read_csv(self.csv_path)
             self.eval_crop_image_arr = np.asarray(
@@ -69,12 +60,12 @@ class CustomDatasetFromImages(Dataset):
             self.data_len = len(self.data_info.index)
 
         self.base_transform = A.Compose([
-            A.Resize(224, 224),
+            A.Resize(300, 300),
             A.Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
             ToTensorV2()
         ])
         self.crop_transform = A.Compose([
-            A.Resize(224, 224),
+            A.Resize(300, 300),
             A.HorizontalFlip(),
             A.Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
             ToTensorV2()
@@ -86,7 +77,7 @@ class CustomDatasetFromImages(Dataset):
             single_image_name = self.image_arr[index]
             # Open image
             img_as_img = np.array(Image.open(single_image_name))
-
+            
             # img_tensor = transforms.ToTensor()(Image.open(single_image_name))
             # print(img_tensor.shape)
             # Transform image to tensor
@@ -170,3 +161,27 @@ class CustomValidDatasetFromImages(Dataset):
 
     def __len__(self):
         return self.data_len
+
+class DataAdasyn(Dataset):
+    def __init__(self, dataset):
+        self.image_list = dataset[:,0]
+        self.ylabel = dataset[:,1:]  # imabe_label, gender_label, age_label, mask_label
+        self._oversample()
+        self.data_len = len(self.ylabel)
+    
+    def _oversample(self):
+        oversampler = ADASYN(random_state=123)
+        self.image_list, self.ylabel = oversampler.fit_resample(self.image_list, self.ylabel)
+
+    def __getitem__(self, index):
+        single_image_name = self.image_list[index]
+        single_image_label = self.ylabel[index][0]
+        single_gender_label = self.ylabel[index][1]
+        single_age_label = self.ylabel[index][2]
+        single_mask_label = self.ylabel[index][3]
+        return (single_image_name, single_image_label,
+                single_gender_label, single_age_label, single_mask_label)
+
+    def __len__(self):
+        return self.data_len
+
