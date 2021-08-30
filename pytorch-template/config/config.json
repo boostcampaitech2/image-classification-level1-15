@@ -13,10 +13,10 @@
         "type": "MaskImageDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 32,
+            "batch_size": 128,
             "shuffle": true,
             "validation_split": 0.0,
-            "num_workers": 2,
+            "num_workers": 4,
             "csv_path": "data/splitted_train_csv_20.csv"
         }
     },
@@ -24,10 +24,10 @@
         "type": "MaskImageValidDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 64,
+            "batch_size": 128,
             "shuffle": false,
             "validation_split": 0.0,
-            "num_workers": 2,
+            "num_workers": 4,
             "csv_path": "data/splitted_valid_csv_20.csv"
         }
     },
