@@ -174,6 +174,7 @@ class DataAdasyn(Dataset):
     
     def _oversample(self):
         oversampler = ADASYN(random_state=123)
+        # ADASYN with resampling image (3d to 2d)
         self.image_list, self.ylabel = oversampler.fit_resample(self.image_list.reshape(self.image_list.shape[0], -1), self.ylabel)
         self.image_list = self.image_list.reshape(self.image_list.shape[0],300,300,3)
 
