@@ -3,7 +3,7 @@ import torch
 from torchvision.utils import make_grid
 from base import BaseTrainer
 from utils import inf_loop, MetricTracker
-
+from imblearn.over_sampling import ADASYN
 
 class Trainer(BaseTrainer):
     """
@@ -43,7 +43,7 @@ class Trainer(BaseTrainer):
 
         :param epoch: Integer, current training epoch.
         :return: A log that contains average loss and metric in this epoch.
-        """
+        """_
         self.model.train()
         self.train_metrics.reset()
         label_name = self.config['arch']['args']['label_name']
@@ -62,16 +62,16 @@ class Trainer(BaseTrainer):
             self.optimizer.zero_grad()
             output = self.model(data)
             if label_name == 'gender':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1.5, 1.0]).to(self.device))
+                # self.criterion = torch.nn.CrossEntropyLoss(
+                #     weight=torch.tensor([1.5, 1.0]).to(self.device))
                 loss = self.criterion(output, gender)
             elif label_name == 'age':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 1., 6.]).to(self.device))
+                # self.criterion = torch.nn.CrossEntropyLoss(
+                #     weight=torch.tensor([1., 1., 6.]).to(self.device))
                 loss = self.criterion(output, age)
             elif label_name == 'mask':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 2., 2.]).to(self.device))
+                # self.criterion = torch.nn.CrossEntropyLoss(
+                #     weight=torch.tensor([1., 2., 2.]).to(self.device))
                 loss = self.criterion(output, mask)
             elif label_name == 'total':
                 loss = self.criterion(output, mask)
@@ -110,6 +110,7 @@ class Trainer(BaseTrainer):
 
         if self.lr_scheduler is not None:
             self.lr_scheduler.step()
+            print('----lr_scheduler')
         return log
 
     def _valid_epoch(self, epoch):
