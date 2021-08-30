@@ -1,5 +1,5 @@
 {
-    "name": "GenderClf_adamw_b1",
+    "name": "GenderClf_adamw_10p_b1",
     "n_gpu": 1,
     "arch": {
         "type": "Model",

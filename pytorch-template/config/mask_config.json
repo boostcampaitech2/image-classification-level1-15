@@ -1,5 +1,5 @@
 {
-    "name": "MaskClf_adamw_b1",
+    "name": "MaskClf_adamw_10p_b1",
     "n_gpu": 1,
     "arch": {
         "type": "Model",
