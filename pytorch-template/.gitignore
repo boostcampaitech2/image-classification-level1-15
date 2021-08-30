@@ -3,3 +3,6 @@ data/__pycache__
 */__pycache__
 data/
 *.ipynb
+nohub.out
+submission.csv
+__pycache__/
