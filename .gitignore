@@ -5,3 +5,4 @@ __pycache__
 saved/
 .vscode
 nohup.out
+.venv
