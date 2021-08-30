@@ -21,7 +21,7 @@ def init_models(config):
 
 
 def get_latest_saved_model_paths(config):
-    checkpoint_path = "/opt/ml/baseline/image-classification-level1-15/pytorch-template/saved/models/"
+    checkpoint_path = "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/"
     save_paths = [
         checkpoint_path + config['save_directory_name']['gender'],
         checkpoint_path + config['save_directory_name']['age'],

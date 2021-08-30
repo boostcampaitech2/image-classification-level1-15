@@ -30,7 +30,7 @@ class AddImageDataLoader(BaseDataLoader):
             # albumentations.ColorJitter(brightness=(0.2, 2), contrast=(
             #     0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3)),
             # albumentations.HorizontalFlip(),
-            # albumentations.augmentations.transforms.ToGray(),
+            # albumentations.augmentations.transformnos.ToGray(),
             albumentations.Normalize(
                 mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
             albumentations.Resize(300, 300),

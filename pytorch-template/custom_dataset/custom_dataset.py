@@ -117,7 +117,7 @@ class Labeling():
             self.train_csv_with_labels)
 
     def read_train_csv(self):
-        return pd.read_csv(os.path.join(self.train_csv_path, 'train.csv'))
+        return pd.read_csv(os.path.join(self.train_csv_path, 'splitted_train_csv_15.csv'))
 
     def get_columns(self, train_csv):
         return train_csv.columns.values
@@ -319,8 +319,8 @@ class DatasetAddImage(Dataset):
             for label in target_dist:
                 size = sizes[label]
                 n_add = max_size - size
-                n_flip = int(n_add * 1)
-                n_rotate = int(n_add * 0)
+                n_flip = int(n_add * 0.8)
+                n_rotate = int(n_add * 0.2)
                 n_mix = n_add - n_flip - n_rotate
                 
                 print('label: %s, original: %d, flip: %d, rotate: %d, mix: %d, total: %d' %(label, size, n_flip, n_rotate, n_mix, sum((size, n_flip, n_rotate, n_mix))))
