@@ -1,0 +1,51 @@
+{
+    "name": "GenderClf_AddImage2",
+    "n_gpu": 1,
+    "arch": {
+        "type": "Model",
+        "args": {
+            "num_classes": 2,
+            "label_name": "gender",
+            "pretrained_model": "resnet50"
+        }
+    },
+    "data_loader": {
+        "type": "AddImageDataLoader",
+        "args": {
+            "data_dir": "data/input/data/",
+            "batch_size": 64,
+            "shuffle": true,
+            "validation_split": 0.2,
+            "num_workers": 3,
+            "csv_path": "data/train_csv_with_multi_labels.csv",
+            "target": "gender"
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args": {
+            "lr": 0.001
+        }
+    },
+    "loss": "cross_entropy_loss",
+    "metrics": [
+        "accuracy",
+        "f1"
+    ],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 20,
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 2,
+        "tensorboard": true
+    }
+}
