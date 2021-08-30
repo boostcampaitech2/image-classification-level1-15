@@ -1,20 +1,110 @@
 from torchvision import datasets, transforms
+from torchvision.transforms.transforms import Normalize, Resize
 from base import BaseDataLoader
 from custom_dataset import *
 from albumentations.pytorch import ToTensorV2
 import albumentations as A
 
 
+transform_list = [
+    A.Compose([
+        A.CenterCrop(height=358, width=268, p=1),
+    ]),
+    A.Compose([
+        A.CenterCrop(height=256, width=192, p=1),
+    ]),
+    A.Compose([
+        A.CenterCrop(height=196, width=160, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.CenterCrop(height=196, width=160, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomCrop(height=196, width=160, p=1)
+    ]),
+    A.Compose([
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+    ]),
+    A.Compose([
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+    ]),
+    A.Compose([
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.RandomCrop(height=196, width=160, p=1)
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.RandomCrop(height=196, width=160, p=1)
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.RandomCrop(height=196, width=160, p=1)
+    ])
+]
+
+
 class MaskImageDataLoader(BaseDataLoader):
     def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.0, num_workers=2, training=True):
+        # self.transform = A.Compose([
+        #     A.Resize(224, 224),
+        #     A.HorizontalFlip(),
+        #     A.Normalize(
+        #         mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
+        #     ToTensorV2()
+        # ])
         self.transform = A.Compose([
-            A.ColorJitter(brightness=(0.2, 2), contrast=(
-                0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3)),
-            A.HorizontalFlip(),
-            A.augmentations.transforms.ToGray(),
+            A.OneOf(transform_list, p=0.5),
             A.Resize(224, 224),
-            A.Normalize(
-                mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
+            A.HorizontalFlip(),
+            A.Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
             ToTensorV2()
         ])
         self.data_dir = data_dir

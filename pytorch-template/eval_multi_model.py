@@ -21,7 +21,7 @@ def init_models(config):
 
 
 def get_latest_saved_model_paths(config):
-    checkpoint_path = "/opt/ml/image-classification-level1-15/pytorch-template/saved/models/"
+    checkpoint_path = "/opt/ml/level1-15/pytorch-template/saved/models/"
     save_paths = [
         checkpoint_path + config['save_directory_name']['gender'],
         checkpoint_path + config['save_directory_name']['age'],
@@ -35,10 +35,21 @@ def get_latest_saved_model_paths(config):
     ]
 
     latest_saved_model_paths = [
-        save_paths[0] + "/" + latest_saved_directory[0] + "/model_best.pth",
-        save_paths[1] + "/" + latest_saved_directory[1] + "/model_best.pth",
-        save_paths[2] + "/" + latest_saved_directory[2] + "/model_best.pth"
+        "/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_gender/0830_105923/checkpoint-epoch8.pth",
+        "/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_age/0830_120150/checkpoint-epoch9.pth",
+        # save_paths[0] + "/" + latest_saved_directory[0] +
+        # "/checkpoint-epoch9.pth",
+        # save_paths[1] + "/" + latest_saved_directory[1] +
+        # "/checkpoint-epoch9.pth",
+        # save_paths[2] + "/" + latest_saved_directory[2] +
+        # "/checkpoint-epoch13.pth"
+        '/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_mask/0830_121746/checkpoint-epoch11.pth'
     ]
+    # latest_saved_model_paths = [
+    #     save_paths[0] + "/" + latest_saved_directory[0] + "/model_best.pth",
+    #     save_paths[1] + "/" + latest_saved_directory[1] + "/model_best.pth",
+    #     save_paths[2] + "/" + latest_saved_directory[2] + "/model_best.pth"
+    # ]
     return latest_saved_model_paths
 
 
