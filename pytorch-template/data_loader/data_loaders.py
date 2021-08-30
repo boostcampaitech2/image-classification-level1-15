@@ -112,8 +112,8 @@ class MaskImageDataLoader(BaseDataLoader):
         # d_type, resize, data_dir, csv_path, transforms, train
         self.dataset = CustomDatasetFromImages(
             self.data_dir, self.csv_path, self.transform, train=training)
-
-        self.dataset = DataAdasyn(self.dataset)
+        if training:
+            self.dataset = DataAdasyn(np.array(self.dataset))
         super().__init__(self.dataset, batch_size, shuffle, validation_split, num_workers)
 
 

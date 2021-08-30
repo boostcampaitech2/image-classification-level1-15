@@ -1,4 +1,5 @@
 import pandas as pd
+from torch.utils import data
 from torch.utils.data import Dataset
 from PIL import Image
 import numpy as np
@@ -7,7 +8,7 @@ from torchvision import datasets, transforms
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import torch
-from imblearn.over_samplng import ADASYN
+from imblearn.over_sampling import ADASYN
 
 # https://github.com/utkuozbulak/pytorch-custom-dataset-examples#incorporating-pandas
 
@@ -92,7 +93,7 @@ class CustomDatasetFromImages(Dataset):
             single_age_label = self.age_label_arr[index]
             single_mask_label = self.mask_label_arr[index]
 
-            return (transform_image['image'], single_image_label,
+            return (np.asarray(transform_image['image']), single_image_label,
                     single_gender_label, single_age_label, single_mask_label)
         else:
             # # Get image name from the pandas df
@@ -165,21 +166,79 @@ class CustomValidDatasetFromImages(Dataset):
 class DataAdasyn(Dataset):
     def __init__(self, dataset):
         self.image_list = dataset[:,0]
-        self.ylabel = dataset[:,1:]  # imabe_label, gender_label, age_label, mask_label
+        self.image_list = np.array([img.tolist() for img in self.image_list])
+        self.ylabel = dataset[:,1].astype('int')  # image_label
+        
         self._oversample()
         self.data_len = len(self.ylabel)
     
     def _oversample(self):
         oversampler = ADASYN(random_state=123)
-        self.image_list, self.ylabel = oversampler.fit_resample(self.image_list, self.ylabel)
+        self.image_list, self.ylabel = oversampler.fit_resample(self.image_list.reshape(self.image_list.shape[0], -1), self.ylabel)
+        self.image_list = self.image_list.reshape(self.image_list.shape[0],300,300,3)
 
     def __getitem__(self, index):
         single_image_name = self.image_list[index]
-        single_image_label = self.ylabel[index][0]
-        single_gender_label = self.ylabel[index][1]
-        single_age_label = self.ylabel[index][2]
-        single_mask_label = self.ylabel[index][3]
-        return (single_image_name, single_image_label,
+        single_image_label = self.ylabel[index]
+
+        if single_image_label // 6 == 0:  # Wear
+            single_mask_label = 0
+            if single_image_label // 3 ==0 : # Male
+                single_gender_label = 0
+                if single_image_label % 3 == 0: # <30
+                    single_age_label = 0
+                elif single_image_label % 3 == 1: # 30~60
+                    single_age_label = 1
+                else: #>60
+                    single_age_label = 2
+            else: #Female
+                single_gender_label = 1
+                if single_image_label % 3 == 0: # <30
+                    single_age_label = 0
+                elif single_image_label % 3 == 1: # 30~60
+                    single_age_label = 1
+                else: #>60
+                    single_age_label = 2
+
+        elif single_image_label // 6 == 1:  # Incorrect
+            single_mask_label = 1
+            if single_image_label // 3 ==0 : # Male
+                single_gender_label = 0
+                if single_image_label % 3 == 0: # <30
+                    single_age_label = 0
+                elif single_image_label % 3 == 1: # 30~60
+                    single_age_label = 1
+                else: #>60
+                    single_age_label = 2
+            else: #Female
+                single_gender_label = 1
+                if single_image_label % 3 == 0: # <30
+                    single_age_label = 0
+                elif single_image_label % 3 == 1: # 30~60
+                    single_age_label = 1
+                else: #>60
+                    single_age_label = 2
+
+        else: # Not wear
+            single_mask_label = 2
+            if single_image_label // 3 ==0 : # Male
+                single_gender_label = 0
+                if single_image_label % 3 == 0: # <30
+                    single_age_label = 0
+                elif single_image_label % 3 == 1: # 30~60
+                    single_age_label = 1
+                else: #>60
+                    single_age_label = 2
+            else: #Female
+                single_gender_label = 1
+                if single_image_label % 3 == 0: # <30
+                    single_age_label = 0
+                elif single_image_label % 3 == 1: # 30~60
+                    single_age_label = 1
+                else: #>60
+                    single_age_label = 2
+
+        return (torch.Tensor(single_image_name), single_image_label,
                 single_gender_label, single_age_label, single_mask_label)
 
     def __len__(self):
