@@ -13,28 +13,28 @@
         "type": "MaskImageDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 32,
+            "batch_size": 64,
             "shuffle": true,
             "validation_split": 0.0,
-            "num_workers": 2,
-            "csv_path": "data/splitted_train_csv_20.csv"
+            "num_workers": 0,
+            "csv_path": "data/splitted_train_csv_10.csv"
         }
     },
     "valid_data_loader": {
         "type": "MaskImageValidDataLoader",
         "args": {
             "data_dir": "data/input/data/",
-            "batch_size": 32,
+            "batch_size": 64,
             "shuffle": false,
             "validation_split": 0.0,
-            "num_workers": 2,
-            "csv_path": "data/splitted_valid_csv_20.csv"
+            "num_workers": 0,
+            "csv_path": "data/splitted_valid_csv_10.csv"
         }
     },
     "optimizer": {
         "type": "AdamW",
         "args": {
-            "lr": 0.001,
+            "lr": 0.005,
             "weight_decay": 5e-4,
             "amsgrad": true
         }
@@ -45,19 +45,21 @@
         "f1"
     ],
     "lr_scheduler": {
-        "type": "StepLR",
+        "type": "OneCycleLR",
         "args": {
-            "step_size": 50,
-            "gamma": 0.1
+            "max_lr": 0.01,
+            "steps_per_epoch": 10,
+            "epochs": 15,
+            "pct_start": 0.2
         }
     },
     "trainer": {
-        "epochs": 30,
+        "epochs": 15,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
         "monitor": "min val_loss",
-        "early_stop": 10,
+        "early_stop": 5,
         "tensorboard": true
     }
 }

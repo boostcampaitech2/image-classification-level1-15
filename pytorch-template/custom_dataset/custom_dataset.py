@@ -84,9 +84,9 @@ class CustomDatasetFromImages(Dataset):
                 xmax = xmax + 30 if xmax + 30 < img_as_img.shape[1] else img_as_img.shape[1] - 1
                 img_as_img = img_as_img[ymin:ymax, xmin:xmax,:]
 
-            # Center crop -> 330x330
+            # crop 수동
             else : 
-                img_as_img = img_as_img[91:421,27:357,:]
+                img_as_img = img_as_img[40:380,80:300,:]
                 
             # Transform image to tensor
             if self.transform is not None:
@@ -124,9 +124,9 @@ class CustomDatasetFromImages(Dataset):
                 ymax = ymax + 30 if ymax + 30 < img_as_img.shape[0] else img_as_img.shape[0] - 1
                 xmax = xmax + 30 if xmax + 30 < img_as_img.shape[1] else img_as_img.shape[1] - 1
                 img_as_img = img_as_img[ymin:ymax, xmin:xmax,:]
-            # Center crop
+            # crop 수동
             else : 
-                img_as_img = img_as_img[106:406,42:342,:]
+                img_as_img = img_as_img[40:380,80:300,:]
                 
             # Transform image to tensor
             if self.transform is not None:
