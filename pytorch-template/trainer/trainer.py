@@ -26,8 +26,8 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
-        self.log_step = int(np.sqrt(data_loader.batch_size))  # 로그스텝?
-        #self.log_step = 100
+        # self.log_step = int(np.sqrt(data_loader.batch_size))  # 로그스텝?
+        self.log_step = 500
         self.train_metrics = MetricTracker(
             'loss', *[m.__name__ for m in self.metric_ftns], writer=self.writer)
         self.valid_metrics = MetricTracker(
@@ -58,16 +58,16 @@ class Trainer(BaseTrainer):
             self.optimizer.zero_grad()
             output = self.model(data)
             if label_name == 'gender':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1.5, 1.0]).to(self.device))
+                self.criterion = torch.nn.CrossEntropyLoss()
+                    # weight=torch.tensor([1.5, 1.0]).to(self.device))
                 loss = self.criterion(output, gender)
             elif label_name == 'age':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 1., 6.]).to(self.device))
+                self.criterion = torch.nn.CrossEntropyLoss()
+                    # weight=torch.tensor([1., 1., 6.]).to(self.device))
                 loss = self.criterion(output, age)
             elif label_name == 'mask':
-                self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 2., 2.]).to(self.device))
+                self.criterion = torch.nn.CrossEntropyLoss()
+                    # weight=torch.tensor([1., 2., 2.]).to(self.device))
                 loss = self.criterion(output, mask)
             elif label_name == 'total':
                 loss = self.criterion(output, mask)
