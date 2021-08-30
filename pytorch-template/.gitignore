@@ -1,8 +1,6 @@
 saved/
-data/__pycache__
-*/__pycache__
 data/
 *.ipynb
-nohub.out
+nohup.out
 submission.csv
-__pycache__/
+**/__pycache__
