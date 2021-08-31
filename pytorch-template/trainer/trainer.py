@@ -3,6 +3,10 @@ import torch
 from torchvision.utils import make_grid
 from base import BaseTrainer
 from utils import inf_loop, MetricTracker
+from model import metric
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 class Trainer(BaseTrainer):
@@ -55,6 +59,9 @@ class Trainer(BaseTrainer):
             elif label_name == 'total':
                 target = target.to(self.device)
 
+# age filtering 57
+# 0.47 vs 0.33 vs 0.2
+
             self.optimizer.zero_grad()
             output = self.model(data)
             if label_name == 'gender':
@@ -63,7 +70,7 @@ class Trainer(BaseTrainer):
                 loss = self.criterion(output, gender)
             elif label_name == 'age':
                 self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 1., 6.]).to(self.device))
+                    weight=torch.tensor([2., 3.3, 4.7]).to(self.device))
                 loss = self.criterion(output, age)
             elif label_name == 'mask':
                 self.criterion = torch.nn.CrossEntropyLoss(
@@ -117,20 +124,27 @@ class Trainer(BaseTrainer):
         """
         self.model.eval()
         self.valid_metrics.reset()
+        # full_output = torch.tensor([]).cuda()
+        # full_target = torch.tensor([]).cuda()
         label_name = self.config['arch']['args']['label_name']
         with torch.no_grad():
             for batch_idx, (data, target, gender, age, mask) in enumerate(self.valid_data_loader):
                 data = data.to(self.device)
                 if label_name == 'gender':
                     gender = gender.to(self.device)
+                    # full_target = torch.cat([full_target, gender])
                 elif label_name == 'age':
                     age = age.to(self.device)
+                    # full_target = torch.cat([full_target, age])
                 elif label_name == 'mask':
                     mask = mask.to(self.device)
+                    # full_target = torch.cat([full_target, mask])
                 elif label_name == 'total':
                     target = target.to(self.device)
+                    # full_target = torch.cat([full_target, target])
 
                 output = self.model(data)
+                # full_output = torch.cat([full_output, output])
                 if label_name == 'gender':
                     loss = self.criterion(output, gender)
                 elif label_name == 'age':
@@ -144,6 +158,8 @@ class Trainer(BaseTrainer):
                     (epoch - 1) * len(self.valid_data_loader) + batch_idx, 'valid')
                 self.valid_metrics.update('loss', loss.item())
                 for met in self.metric_ftns:
+                    # if met.__name__=='f1':
+                    #     continue
                     if label_name == 'gender':
                         self.valid_metrics.update(
                             met.__name__, met(output, gender))
@@ -160,6 +176,24 @@ class Trainer(BaseTrainer):
                 self.writer.add_image('input', make_grid(
                     data.cpu(), nrow=8, normalize=True))
 
+                if label_name == 'gender':
+                    target = gender
+                elif label_name == 'age':
+                    target = age
+                elif label_name == 'mask':
+                    target = mask
+                elif label_name == 'total':
+                    target = target
+
+                conf_mat = confusion_matrix(
+                    target.cpu(), torch.argmax(output, dim=1).cpu())
+                fig = plt.figure()
+                sns.heatmap(conf_mat, cmap=plt.cm.Blues, annot=True, fmt='g')
+                plt.show()
+                plt.xlabel('predicted label')
+                plt.ylabel('true label')
+                self.writer.add_figure('fig', fig)
+        # self.valid_metrics.update('f1', metric.f1(full_output, full_target))
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():
             self.writer.add_histogram(name, p, bins='auto')
