@@ -1,12 +1,12 @@
 {
-    "name": "AgeClf_adamw_10p_b1",
+    "name": "AgeClf_best_b4",
     "n_gpu": 1,
     "arch": {
         "type": "Model",
         "args": {
             "num_classes": 3,
             "label_name": "age",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "efficientnet_b4"
         }
     },
     "data_loader": {

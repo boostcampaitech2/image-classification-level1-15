@@ -9,6 +9,10 @@ from parse_config import ConfigParser
 import pandas as pd
 from torchvision import models
 import os
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
+import albumentations.pytorch
+import numpy as np
 
 
 def init_models(config):
@@ -53,16 +57,72 @@ def get_saved_model_state_dict(latest_saved_model_paths):
     return [state_dict1, state_dict2, state_dict3]
 
 
+def test_time_augmentation(model1, model2, model3, images):
+    # print(f'here >>>>>>> {images.shape} {len(images)}')
+    # images = [batch_size, (channel RGB 3 * total aug_num), W, H]
+    images = torch.split(images, 3, dim=1)
+
+    # after split images = [64, 3, 224, 224] * aug_num
+    # print(f'here ****************** {images[0].shape} {len(images)}')
+    for i in range(len(images)):
+        if i == 0:
+            preds_gender = model1(images[i])
+            preds_age = model2(images[i])
+            preds_mask = model3(images[i])
+        else:
+            pred_gender = model1(images[i])
+            pred_age = model2(images[i])
+            pred_mask = model3(images[i])
+            preds_mask = torch.stack((preds_mask, pred_mask), dim=1)
+            preds_gender = torch.stack((preds_gender, pred_gender), dim=1)
+            preds_age = torch.stack((preds_age, pred_age), dim=1)
+            # print(preds_mask.shape)
+            # if batch == 1 preds [2, 3] [aug_num, class num]
+            # if batch == 64 preds [128, 3] [aug_num*batch, class num]
+    return torch.mean(preds_gender, dim=1), torch.mean(preds_age, dim=1), torch.mean(preds_mask, dim=1)
+
+
+class EvalDataset(Dataset):
+    def __init__(self, img_paths, augs, transform):
+        self.img_paths = img_paths
+        self.augs = augs
+        self.transform = transform
+
+    def __getitem__(self, index):
+        image = Image.open(self.img_paths[index])
+        for i in range(len(self.augs) + 1):
+            if i == 0:
+                images = self.transform(image=np.array(image))['image']
+            else:
+                image = self.augs[i - 1](image=np.array(image))['image']
+                images = torch.cat(
+                    (images, self.transform(image=image)['image']), dim=0)
+        return images
+
+    def __len__(self):
+        return len(self.img_paths)
+
+
 def main(config):
-    data_loader = getattr(module_data, config['data_loader']['type'])(
-        config['data_loader']['args']['data_dir'],
-        batch_size=64,
-        shuffle=False,
-        validation_split=0.0,
-        training=False,
-        num_workers=2,
-        csv_path=config['data_loader']['args']['csv_path'],
-    )
+    test_dir = './data/input/data/eval'
+    image_dir = os.path.join(test_dir, 'crop_images')
+    submission = pd.read_csv(os.path.join(test_dir, 'info.csv'))
+
+    image_paths = [os.path.join(image_dir, img_id)
+                   for img_id in submission.ImageID]
+    transform = albumentations.Compose([
+        albumentations.Resize(224, 224),
+        albumentations.Normalize(
+            mean=(0.560, 0.524, 0.501), std=(0.233, 0.243, 0.245)),
+        albumentations.pytorch.transforms.ToTensorV2()
+    ])
+    augs = [
+        albumentations.HorizontalFlip()
+        # albumentations.ColorJitter(brightness=(0.2, 2), contrast=(
+        #     0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3))
+    ]
+    testset = EvalDataset(image_paths, augs, transform)
+    data_loader = DataLoader(testset, batch_size=64, shuffle=False)
 
     print()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -85,47 +145,47 @@ def main(config):
     model2.eval()
     model3.eval()
 
-    submission = pd.read_csv(
-        config['data_loader']['args']['data_dir'] + 'eval/info.csv')
+    # submission = pd.read_csv(
+    #     config['data_loader']['args']['data_dir'] + 'eval/info.csv')
 
-    gender_pred = []
-    age_pred = []
-    mask_pred = []
+    gender_preds = []
+    age_preds = []
+    mask_preds = []
+
     with torch.no_grad():
-        for i, image in enumerate(tqdm(data_loader)):
-            image = image.to(device)
+        for i, images in enumerate(tqdm(data_loader)):
+            images = images.to(device)
+            # print(f'image {images.shape}')
+            pred_gender, pred_age, pred_mask = test_time_augmentation(
+                model1, model2, model3, images)
+            # print(f'shape !!!!!!! {pred_gender.shape}')
+            pred1 = pred_gender.argmax(dim=-1)
+            pred2 = pred_age.argmax(dim=-1)
+            pred3 = pred_mask.argmax(dim=-1)
 
-            # 0:male, 1:female
-            output1 = model1(image)
-            # 0: age < 30, 1: 30 <= age < 60, 2: 60 <= age
-            output2 = model2(image)
-            # 0: mask, 2: incorrect, 3: normal
-            output3 = model3(image)  # 마스크 착용여부
+            gender_preds.extend(pred1.cpu().numpy())
+            age_preds.extend(pred2.cpu().numpy())
+            mask_preds.extend(pred3.cpu().numpy())
 
-            pred1 = output1.argmax(dim=-1)
-            pred2 = output2.argmax(dim=-1)
-            pred3 = output3.argmax(dim=-1)
-
-            gender_pred.extend(pred1.cpu().numpy())
-            age_pred.extend(pred2.cpu().numpy())
-            mask_pred.extend(pred3.cpu().numpy())
-
+            # if i == 2:
+            #     break
     CLASS_DICT = {
         '000': 0, '001': 1, '002': 2, '010': 3, '011': 4, '012': 5,
         '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
         '200': 12, '201': 13, '202': 14, '210': 15, '211': 16, '212': 17
     }
 
-    preds = zip(gender_pred, age_pred, mask_pred)
+    preds = zip(gender_preds, age_preds, mask_preds)
     labels = [CLASS_DICT[''.join(map(str, [mask, gender, age]))]
               for gender, age, mask in preds]
+
     submission['ans'] = labels
-    submission.to_csv('submission.csv', index=False)
+    submission.to_csv('ttttest.csv', index=False)
 
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser(description='PyTorch Template')
-    args.add_argument('-c', '--config', default=None, type=str,
+    args.add_argument('-c', '--config', default='config/eval_config.json', type=str,
                       help='config file path (default: None)')
     args.add_argument('-r', '--resume', default=None, type=str,
                       help='path to latest checkpoint (default: None)')

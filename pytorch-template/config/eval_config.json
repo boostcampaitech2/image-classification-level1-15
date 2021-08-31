@@ -1,29 +1,29 @@
 {
-    "name": "GenderClassificationEfficientnet",
+    "name": "EvalRegTTA",
     "n_gpu": 1,
     "save_directory_name": {
-        "gender": "GenderClf_adamw_b1",
-        "age": "AgeClf_adamw_b1",
-        "mask": "MaskClf_adamw_b1"
+        "gender": "GenderRegnetTTA",
+        "age": "AgeRegnetTTA",
+        "mask": "MaskRegnetTTA"
     },
     "arch": {
         "type1": "Model",
         "args1": {
             "num_classes": 2,
             "label_name": "gender",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "regnety_006"
         },
         "type2": "Model",
         "args2": {
             "num_classes": 3,
             "label_name": "age",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "regnety_006"
         },
         "type3": "Model",
         "args3": {
             "num_classes": 3,
             "label_name": "mask",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "regnety_006"
         }
     },
     "data_loader": {

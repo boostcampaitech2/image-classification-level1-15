@@ -1,12 +1,12 @@
 {
-    "name": "GenderClf_adamw_10p_b1",
+    "name": "GenderClf_best_b4",
     "n_gpu": 1,
     "arch": {
         "type": "Model",
         "args": {
             "num_classes": 2,
             "label_name": "gender",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "efficientnet_b4"
         }
     },
     "data_loader": {
