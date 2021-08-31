@@ -21,24 +21,23 @@ def top_k_acc(output, target, k=3):
 
 
 def f1(output, target, is_training=False):
-    pred = torch.argmax(output, dim=1)
-
-    assert pred.ndim == 1
-    assert target.ndim == 1 or target.ndim == 2
-
-    if target.ndim == 2:
-        target = target.argmax(dim=1)
-
-    tp = (target * pred).sum().to(torch.float32)
-    tn = ((1 - target) * (1 - pred)).sum().to(torch.float32)
-    fp = ((1 - target) * pred).sum().to(torch.float32)
-    fn = (target * (1 - pred)).sum().to(torch.float32)
-
-    epsilon = 1e-7
-
-    precision = tp / (tp + fp + epsilon)
-    recall = tp / (tp + fn + epsilon)
-
-    f1 = 2 * (precision * recall) / (precision + recall + epsilon)
-    f1.requires_grad = is_training
-    return f1
+    with torch.no_grad():
+        pred = torch.argmax(output, dim=1)
+        assert pred.shape[0] == len(target)
+        f1s = []
+        epsilon = 1e-7
+        for label in range(18):
+            label_pred = (pred==label)
+            label_target = (target==label)
+            label_pred_not = (pred!=label)
+            label_target_not = (target!=label)
+            tp = (label_target&label_pred).sum().to(torch.float32)
+            tn = (label_target_not&label_pred_not).sum().to(torch.float32)
+            fp = (label_target_not&label_pred).sum().to(torch.float32)
+            fn = (label_target&label_pred_not).sum().to(torch.float32)
+            precision = tp / (tp + fp + epsilon)
+            recall = tp / (tp + fn + epsilon)
+            f1 = 2 * (precision * recall) / (precision + recall + epsilon)
+            f1s.append(f1)
+        f1s = list(filter(lambda x: x!=0, f1s))
+    return sum(f1s)/len(f1s)
