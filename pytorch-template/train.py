@@ -10,7 +10,9 @@ from parse_config import ConfigParser
 from trainer import Trainer
 from utils import prepare_device
 from custom_dataset import CustomDatasetFromImages
+import wandb
 
+wandb.init(project='agyeong', entity='agyeong')
 
 # fix random seeds for reproducibility
 SEED = 123
@@ -47,6 +49,13 @@ def main(config):
     optimizer = config.init_obj('optimizer', torch.optim, trainable_params)
     lr_scheduler = config.init_obj(
         'lr_scheduler', torch.optim.lr_scheduler, optimizer)
+
+    wandb.config.update({'name':config['name'], 'label':config['arch']['args']['label_name'],
+                        'pretrained_model':config['arch']['args']['pretrained_model'],
+                        'batch_size':config['data_loader']['args']['batch_size'],
+                        'optimizer':config['optimizer']['type'],'loss':config['loss'],
+                        'lr':config['optimizer']['args']['lr'],'epoch': config['trainer']['epochs'],
+                        'cutface':True})
 
     trainer = Trainer(model, criterion, metrics, optimizer,
                       config=config,
