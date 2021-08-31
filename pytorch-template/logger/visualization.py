@@ -32,7 +32,7 @@ class TensorboardWriter():
 
         self.tb_writer_ftns = {
             'add_scalar', 'add_scalars', 'add_image', 'add_images', 'add_audio',
-            'add_text', 'add_histogram', 'add_pr_curve', 'add_embedding'
+            'add_text', 'add_histogram', 'add_pr_curve', 'add_embedding', 'add_figure'
         }
         self.tag_mode_exceptions = {'add_histogram', 'add_embedding'}
         self.timer = datetime.now()
@@ -71,3 +71,25 @@ class TensorboardWriter():
             except AttributeError:
                 raise AttributeError("type object '{}' has no attribute '{}'".format(self.selected_module, name))
             return attr
+
+
+
+
+
+# def log_confusion_matrix(epoch, logs):
+#   # Use the model to predict the values from the validation dataset.
+#   test_pred_raw = model.predict(test_images)
+#   test_pred = np.argmax(test_pred_raw, axis=1)
+
+#   # Calculate the confusion matrix.
+#   cm = sklearn.metrics.confusion_matrix(test_labels, test_pred)
+#   # Log the confusion matrix as an image summary.
+#   figure = plot_confusion_matrix(cm, class_names=class_names)
+#   cm_image = plot_to_image(figure)
+
+#   # Log the confusion matrix as an image summary.
+#   with file_writer_cm.as_default():
+#     tf.summary.image("Confusion Matrix", cm_image, step=epoch)
+
+# # Define the per-epoch callback.
+# cm_callback = keras.callbacks.LambdaCallback(on_epoch_end=log_confusion_matrix)
