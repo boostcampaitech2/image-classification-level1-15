@@ -1,0 +1,1256 @@
+Loading pretrained weights from url (https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights/efficientnet_b1-533bc792.pth)
+Model(
+  (pretrained_model): EfficientNet(
+    (conv_stem): Conv2d(3, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+    (bn1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (act1): SiLU(inplace=True)
+    (blocks): Sequential(
+      (0): Sequential(
+        (0): DepthwiseSeparableConv(
+          (conv_dw): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=32, bias=False)
+          (bn1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(32, 8, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(8, 32, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pw): Conv2d(32, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn2): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): Identity()
+        )
+        (1): DepthwiseSeparableConv(
+          (conv_dw): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=16, bias=False)
+          (bn1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(16, 4, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(4, 16, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pw): Conv2d(16, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn2): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): Identity()
+        )
+      )
+      (1): Sequential(
+        (0): InvertedResidual(
+          (conv_pw): Conv2d(16, 96, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(96, 96, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=96, bias=False)
+          (bn2): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(96, 4, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(4, 96, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(96, 24, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(24, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): InvertedResidual(
+          (conv_pw): Conv2d(24, 144, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(144, 144, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=144, bias=False)
+          (bn2): BatchNorm2d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(144, 6, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(6, 144, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(144, 24, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(24, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (2): InvertedResidual(
+          (conv_pw): Conv2d(24, 144, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(144, 144, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=144, bias=False)
+          (bn2): BatchNorm2d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(144, 6, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(6, 144, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(144, 24, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(24, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (2): Sequential(
+        (0): InvertedResidual(
+          (conv_pw): Conv2d(24, 144, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(144, 144, kernel_size=(5, 5), stride=(2, 2), padding=(2, 2), groups=144, bias=False)
+          (bn2): BatchNorm2d(144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(144, 6, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(6, 144, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(144, 40, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(40, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): InvertedResidual(
+          (conv_pw): Conv2d(40, 240, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(240, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(240, 240, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=240, bias=False)
+          (bn2): BatchNorm2d(240, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(240, 10, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(10, 240, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(240, 40, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(40, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (2): InvertedResidual(
+          (conv_pw): Conv2d(40, 240, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(240, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(240, 240, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=240, bias=False)
+          (bn2): BatchNorm2d(240, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(240, 10, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(10, 240, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(240, 40, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(40, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (3): Sequential(
+        (0): InvertedResidual(
+          (conv_pw): Conv2d(40, 240, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(240, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(240, 240, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=240, bias=False)
+          (bn2): BatchNorm2d(240, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(240, 10, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(10, 240, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(240, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): InvertedResidual(
+          (conv_pw): Conv2d(80, 480, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(480, 480, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=480, bias=False)
+          (bn2): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(480, 20, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(20, 480, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(480, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (2): InvertedResidual(
+          (conv_pw): Conv2d(80, 480, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(480, 480, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=480, bias=False)
+          (bn2): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(480, 20, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(20, 480, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(480, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): InvertedResidual(
+          (conv_pw): Conv2d(80, 480, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(480, 480, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=480, bias=False)
+          (bn2): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(480, 20, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(20, 480, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(480, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (4): Sequential(
+        (0): InvertedResidual(
+          (conv_pw): Conv2d(80, 480, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(480, 480, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=480, bias=False)
+          (bn2): BatchNorm2d(480, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(480, 20, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(20, 480, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(480, 112, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(112, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): InvertedResidual(
+          (conv_pw): Conv2d(112, 672, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(672, 672, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=672, bias=False)
+          (bn2): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(672, 28, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(28, 672, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(672, 112, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(112, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (2): InvertedResidual(
+          (conv_pw): Conv2d(112, 672, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(672, 672, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=672, bias=False)
+          (bn2): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(672, 28, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(28, 672, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(672, 112, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(112, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): InvertedResidual(
+          (conv_pw): Conv2d(112, 672, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(672, 672, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=672, bias=False)
+          (bn2): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(672, 28, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(28, 672, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(672, 112, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(112, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (5): Sequential(
+        (0): InvertedResidual(
+          (conv_pw): Conv2d(112, 672, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(672, 672, kernel_size=(5, 5), stride=(2, 2), padding=(2, 2), groups=672, bias=False)
+          (bn2): BatchNorm2d(672, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(672, 28, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(28, 672, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(672, 192, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): InvertedResidual(
+          (conv_pw): Conv2d(192, 1152, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(1152, 1152, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=1152, bias=False)
+          (bn2): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(1152, 48, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(48, 1152, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(1152, 192, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (2): InvertedResidual(
+          (conv_pw): Conv2d(192, 1152, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(1152, 1152, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=1152, bias=False)
+          (bn2): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(1152, 48, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(48, 1152, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(1152, 192, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (3): InvertedResidual(
+          (conv_pw): Conv2d(192, 1152, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(1152, 1152, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=1152, bias=False)
+          (bn2): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(1152, 48, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(48, 1152, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(1152, 192, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (4): InvertedResidual(
+          (conv_pw): Conv2d(192, 1152, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(1152, 1152, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=1152, bias=False)
+          (bn2): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(1152, 48, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(48, 1152, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(1152, 192, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(192, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (6): Sequential(
+        (0): InvertedResidual(
+          (conv_pw): Conv2d(192, 1152, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(1152, 1152, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=1152, bias=False)
+          (bn2): BatchNorm2d(1152, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(1152, 48, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(48, 1152, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(1152, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(320, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): InvertedResidual(
+          (conv_pw): Conv2d(320, 1920, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn1): BatchNorm2d(1920, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act1): SiLU(inplace=True)
+          (conv_dw): Conv2d(1920, 1920, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=1920, bias=False)
+          (bn2): BatchNorm2d(1920, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (act2): SiLU(inplace=True)
+          (se): SqueezeExcite(
+            (conv_reduce): Conv2d(1920, 80, kernel_size=(1, 1), stride=(1, 1))
+            (act1): SiLU(inplace=True)
+            (conv_expand): Conv2d(80, 1920, kernel_size=(1, 1), stride=(1, 1))
+            (gate): Sigmoid()
+          )
+          (conv_pwl): Conv2d(1920, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (bn3): BatchNorm2d(320, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+    )
+    (conv_head): Conv2d(320, 1280, kernel_size=(1, 1), stride=(1, 1), bias=False)
+    (bn2): BatchNorm2d(1280, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (act2): SiLU(inplace=True)
+    (global_pool): SelectAdaptivePool2d (pool_type=avg, flatten=Flatten(start_dim=1, end_dim=-1))
+    (classifier): Linear(in_features=1280, out_features=1000, bias=True)
+  )
+  (fc): Linear(in_features=1000, out_features=3, bias=True)
+)
+Trainable parameters: 7797187
+cuda:0 1
+Train Epoch: 1 [0/4320 (0%)] Loss: 1.186189
+Train Epoch: 1 [512/4320 (12%)] Loss: 0.596362
+Train Epoch: 1 [1024/4320 (24%)] Loss: 0.493641
+Train Epoch: 1 [1536/4320 (36%)] Loss: 0.415471
+Train Epoch: 1 [2048/4320 (47%)] Loss: 0.370992
+Train Epoch: 1 [2560/4320 (59%)] Loss: 0.168075
+Train Epoch: 1 [3072/4320 (71%)] Loss: 0.352170
+Train Epoch: 1 [3584/4320 (83%)] Loss: 0.408116
+Train Epoch: 1 [4096/4320 (95%)] Loss: 0.284950
+    epoch          : 1
+    loss           : 0.4087608219946132
+    accuracy       : 0.7628676470588235
+    f1             : 0.7055580019950867
+    val_loss       : 0.3162766370703192
+    val_accuracy   : 0.8121060924369747
+    val_f1         : 0.722507655620575
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch1.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 2 [0/4320 (0%)] Loss: 0.151461
+Train Epoch: 2 [512/4320 (12%)] Loss: 0.201368
+Train Epoch: 2 [1024/4320 (24%)] Loss: 0.264810
+Train Epoch: 2 [1536/4320 (36%)] Loss: 0.271538
+Train Epoch: 2 [2048/4320 (47%)] Loss: 0.223270
+Train Epoch: 2 [2560/4320 (59%)] Loss: 0.137877
+Train Epoch: 2 [3072/4320 (71%)] Loss: 0.169993
+Train Epoch: 2 [3584/4320 (83%)] Loss: 0.112560
+Train Epoch: 2 [4096/4320 (95%)] Loss: 0.161074
+    epoch          : 2
+    loss           : 0.2328969803364838
+    accuracy       : 0.8524816176470589
+    f1             : 0.7522987723350525
+    val_loss       : 0.2703974027844036
+    val_accuracy   : 0.8399422268907564
+    val_f1         : 0.773909330368042
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch2.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 3 [0/4320 (0%)] Loss: 0.142586
+Train Epoch: 3 [512/4320 (12%)] Loss: 0.217708
+Train Epoch: 3 [1024/4320 (24%)] Loss: 0.216271
+Train Epoch: 3 [1536/4320 (36%)] Loss: 0.156456
+Train Epoch: 3 [2048/4320 (47%)] Loss: 0.207559
+Train Epoch: 3 [2560/4320 (59%)] Loss: 0.107665
+Train Epoch: 3 [3072/4320 (71%)] Loss: 0.198946
+Train Epoch: 3 [3584/4320 (83%)] Loss: 0.163838
+Train Epoch: 3 [4096/4320 (95%)] Loss: 0.169326
+    epoch          : 3
+    loss           : 0.1772327855886782
+    accuracy       : 0.8805147058823529
+    f1             : 0.8013091683387756
+    val_loss       : 0.24308712955783396
+    val_accuracy   : 0.8421743697478992
+    val_f1         : 0.7493212223052979
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch3.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 4 [0/4320 (0%)] Loss: 0.208905
+Train Epoch: 4 [512/4320 (12%)] Loss: 0.072891
+Train Epoch: 4 [1024/4320 (24%)] Loss: 0.147566
+Train Epoch: 4 [1536/4320 (36%)] Loss: 0.243354
+Train Epoch: 4 [2048/4320 (47%)] Loss: 0.143801
+Train Epoch: 4 [2560/4320 (59%)] Loss: 0.257804
+Train Epoch: 4 [3072/4320 (71%)] Loss: 0.100893
+Train Epoch: 4 [3584/4320 (83%)] Loss: 0.057431
+Train Epoch: 4 [4096/4320 (95%)] Loss: 0.218814
+    epoch          : 4
+    loss           : 0.1589548465631464
+    accuracy       : 0.8917738970588235
+    f1             : 0.8227423429489136
+    val_loss       : 0.264890474431655
+    val_accuracy   : 0.8429621848739496
+    val_f1         : 0.7825246453285217
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch4.pth ...
+Train Epoch: 5 [0/4320 (0%)] Loss: 0.168305
+Train Epoch: 5 [512/4320 (12%)] Loss: 0.162164
+Train Epoch: 5 [1024/4320 (24%)] Loss: 0.074066
+Train Epoch: 5 [1536/4320 (36%)] Loss: 0.089911
+Train Epoch: 5 [2048/4320 (47%)] Loss: 0.083468
+Train Epoch: 5 [2560/4320 (59%)] Loss: 0.133808
+Train Epoch: 5 [3072/4320 (71%)] Loss: 0.122484
+Train Epoch: 5 [3584/4320 (83%)] Loss: 0.067871
+Train Epoch: 5 [4096/4320 (95%)] Loss: 0.141491
+    epoch          : 5
+    loss           : 0.13815727912108688
+    accuracy       : 0.9129136029411765
+    f1             : 0.8627257943153381
+    val_loss       : 0.24610177471357234
+    val_accuracy   : 0.8623949579831933
+    val_f1         : 0.8096656799316406
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch5.pth ...
+Train Epoch: 6 [0/4320 (0%)] Loss: 0.075134
+Train Epoch: 6 [512/4320 (12%)] Loss: 0.124460
+Train Epoch: 6 [1024/4320 (24%)] Loss: 0.104114
+Train Epoch: 6 [1536/4320 (36%)] Loss: 0.055576
+Train Epoch: 6 [2048/4320 (47%)] Loss: 0.173342
+Train Epoch: 6 [2560/4320 (59%)] Loss: 0.159624
+Train Epoch: 6 [3072/4320 (71%)] Loss: 0.145976
+Train Epoch: 6 [3584/4320 (83%)] Loss: 0.134391
+Train Epoch: 6 [4096/4320 (95%)] Loss: 0.195834
+    epoch          : 6
+    loss           : 0.11860442944966695
+    accuracy       : 0.9283088235294118
+    f1             : 0.8935934901237488
+    val_loss       : 0.2613893799922046
+    val_accuracy   : 0.8647584033613446
+    val_f1         : 0.7925050854682922
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch6.pth ...
+Train Epoch: 7 [0/4320 (0%)] Loss: 0.106341
+Train Epoch: 7 [512/4320 (12%)] Loss: 0.039509
+Train Epoch: 7 [1024/4320 (24%)] Loss: 0.069490
+Train Epoch: 7 [1536/4320 (36%)] Loss: 0.098752
+Train Epoch: 7 [2048/4320 (47%)] Loss: 0.153409
+Train Epoch: 7 [2560/4320 (59%)] Loss: 0.096748
+Train Epoch: 7 [3072/4320 (71%)] Loss: 0.093664
+Train Epoch: 7 [3584/4320 (83%)] Loss: 0.113016
+Train Epoch: 7 [4096/4320 (95%)] Loss: 0.074795
+    epoch          : 7
+    loss           : 0.11335996456225128
+    accuracy       : 0.9338235294117647
+    f1             : 0.9070166945457458
+    val_loss       : 0.2336524891502717
+    val_accuracy   : 0.8705357142857143
+    val_f1         : 0.8150897026062012
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch7.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 8 [0/4320 (0%)] Loss: 0.169054
+Train Epoch: 8 [512/4320 (12%)] Loss: 0.092795
+Train Epoch: 8 [1024/4320 (24%)] Loss: 0.090821
+Train Epoch: 8 [1536/4320 (36%)] Loss: 0.087609
+Train Epoch: 8 [2048/4320 (47%)] Loss: 0.059146
+Train Epoch: 8 [2560/4320 (59%)] Loss: 0.070949
+Train Epoch: 8 [3072/4320 (71%)] Loss: 0.072922
+Train Epoch: 8 [3584/4320 (83%)] Loss: 0.021625
+Train Epoch: 8 [4096/4320 (95%)] Loss: 0.105222
+    epoch          : 8
+    loss           : 0.07654422425719745
+    accuracy       : 0.9574908088235294
+    f1             : 0.9385969042778015
+    val_loss       : 0.2283707971082014
+    val_accuracy   : 0.8801207983193278
+    val_f1         : 0.8334285020828247
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch8.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 9 [0/4320 (0%)] Loss: 0.058191
+Train Epoch: 9 [512/4320 (12%)] Loss: 0.045892
+Train Epoch: 9 [1024/4320 (24%)] Loss: 0.024036
+Train Epoch: 9 [1536/4320 (36%)] Loss: 0.075974
+Train Epoch: 9 [2048/4320 (47%)] Loss: 0.056404
+Train Epoch: 9 [2560/4320 (59%)] Loss: 0.055855
+Train Epoch: 9 [3072/4320 (71%)] Loss: 0.044879
+Train Epoch: 9 [3584/4320 (83%)] Loss: 0.037070
+Train Epoch: 9 [4096/4320 (95%)] Loss: 0.293447
+    epoch          : 9
+    loss           : 0.07680730458677691
+    accuracy       : 0.9540441176470589
+    f1             : 0.933804988861084
+    val_loss       : 0.21918723995194717
+    val_accuracy   : 0.8828781512605042
+    val_f1         : 0.8349791765213013
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch9.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 10 [0/4320 (0%)] Loss: 0.097655
+Train Epoch: 10 [512/4320 (12%)] Loss: 0.079020
+Train Epoch: 10 [1024/4320 (24%)] Loss: 0.125554
+Train Epoch: 10 [1536/4320 (36%)] Loss: 0.081976
+Train Epoch: 10 [2048/4320 (47%)] Loss: 0.025346
+Train Epoch: 10 [2560/4320 (59%)] Loss: 0.066067
+Train Epoch: 10 [3072/4320 (71%)] Loss: 0.070643
+Train Epoch: 10 [3584/4320 (83%)] Loss: 0.057361
+Train Epoch: 10 [4096/4320 (95%)] Loss: 0.021630
+    epoch          : 10
+    loss           : 0.07068941301173147
+    accuracy       : 0.9618566176470589
+    f1             : 0.946536123752594
+    val_loss       : 0.23991448738995722
+    val_accuracy   : 0.8713235294117647
+    val_f1         : 0.8034708499908447
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch10.pth ...
+Train Epoch: 11 [0/4320 (0%)] Loss: 0.022835
+Train Epoch: 11 [512/4320 (12%)] Loss: 0.169985
+Train Epoch: 11 [1024/4320 (24%)] Loss: 0.039391
+Train Epoch: 11 [1536/4320 (36%)] Loss: 0.065856
+Train Epoch: 11 [2048/4320 (47%)] Loss: 0.075390
+Train Epoch: 11 [2560/4320 (59%)] Loss: 0.051680
+Train Epoch: 11 [3072/4320 (71%)] Loss: 0.075086
+Train Epoch: 11 [3584/4320 (83%)] Loss: 0.076533
+Train Epoch: 11 [4096/4320 (95%)] Loss: 0.058011
+    epoch          : 11
+    loss           : 0.06686174108044189
+    accuracy       : 0.9607077205882353
+    f1             : 0.9422250390052795
+    val_loss       : 0.21658597053850398
+    val_accuracy   : 0.8832720588235294
+    val_f1         : 0.8234608173370361
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch11.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 12 [0/4320 (0%)] Loss: 0.023536
+Train Epoch: 12 [512/4320 (12%)] Loss: 0.026478
+Train Epoch: 12 [1024/4320 (24%)] Loss: 0.057567
+Train Epoch: 12 [1536/4320 (36%)] Loss: 0.056075
+Train Epoch: 12 [2048/4320 (47%)] Loss: 0.040644
+Train Epoch: 12 [2560/4320 (59%)] Loss: 0.146922
+Train Epoch: 12 [3072/4320 (71%)] Loss: 0.058042
+Train Epoch: 12 [3584/4320 (83%)] Loss: 0.052627
+Train Epoch: 12 [4096/4320 (95%)] Loss: 0.054652
+    epoch          : 12
+    loss           : 0.06559451852979906
+    accuracy       : 0.9611672794117647
+    f1             : 0.9461488127708435
+    val_loss       : 0.23441393804900787
+    val_accuracy   : 0.8897058823529411
+    val_f1         : 0.8453657627105713
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch12.pth ...
+Train Epoch: 13 [0/4320 (0%)] Loss: 0.048370
+Train Epoch: 13 [512/4320 (12%)] Loss: 0.048118
+Train Epoch: 13 [1024/4320 (24%)] Loss: 0.065870
+Train Epoch: 13 [1536/4320 (36%)] Loss: 0.023251
+Train Epoch: 13 [2048/4320 (47%)] Loss: 0.025418
+Train Epoch: 13 [2560/4320 (59%)] Loss: 0.054618
+Train Epoch: 13 [3072/4320 (71%)] Loss: 0.023418
+Train Epoch: 13 [3584/4320 (83%)] Loss: 0.052865
+Train Epoch: 13 [4096/4320 (95%)] Loss: 0.050588
+    epoch          : 13
+    loss           : 0.04909217028933413
+    accuracy       : 0.9733455882352942
+    f1             : 0.9634107947349548
+    val_loss       : 0.2140111443312729
+    val_accuracy   : 0.8898371848739496
+    val_f1         : 0.8417467474937439
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch13.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 14 [0/4320 (0%)] Loss: 0.024946
+Train Epoch: 14 [512/4320 (12%)] Loss: 0.023569
+Train Epoch: 14 [1024/4320 (24%)] Loss: 0.063029
+Train Epoch: 14 [1536/4320 (36%)] Loss: 0.029184
+Train Epoch: 14 [2048/4320 (47%)] Loss: 0.033941
+Train Epoch: 14 [2560/4320 (59%)] Loss: 0.035468
+Train Epoch: 14 [3072/4320 (71%)] Loss: 0.065611
+Train Epoch: 14 [3584/4320 (83%)] Loss: 0.044180
+Train Epoch: 14 [4096/4320 (95%)] Loss: 0.044750
+    epoch          : 14
+    loss           : 0.0451020018389339
+    accuracy       : 0.9758731617647058
+    f1             : 0.96610426902771
+    val_loss       : 0.2556685358285904
+    val_accuracy   : 0.8908876050420168
+    val_f1         : 0.8523233532905579
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch14.pth ...
+Train Epoch: 15 [0/4320 (0%)] Loss: 0.064116
+Train Epoch: 15 [512/4320 (12%)] Loss: 0.018922
+Train Epoch: 15 [1024/4320 (24%)] Loss: 0.068964
+Train Epoch: 15 [1536/4320 (36%)] Loss: 0.066223
+Train Epoch: 15 [2048/4320 (47%)] Loss: 0.009634
+Train Epoch: 15 [2560/4320 (59%)] Loss: 0.051107
+Train Epoch: 15 [3072/4320 (71%)] Loss: 0.006324
+Train Epoch: 15 [3584/4320 (83%)] Loss: 0.021089
+Train Epoch: 15 [4096/4320 (95%)] Loss: 0.010050
+    epoch          : 15
+    loss           : 0.051935890401877904
+    accuracy       : 0.9754136029411765
+    f1             : 0.9662681818008423
+    val_loss       : 0.20393631475813248
+    val_accuracy   : 0.8964023109243698
+    val_f1         : 0.8431523442268372
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch15.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 16 [0/4320 (0%)] Loss: 0.003167
+Train Epoch: 16 [512/4320 (12%)] Loss: 0.043865
+Train Epoch: 16 [1024/4320 (24%)] Loss: 0.024175
+Train Epoch: 16 [1536/4320 (36%)] Loss: 0.046051
+Train Epoch: 16 [2048/4320 (47%)] Loss: 0.049550
+Train Epoch: 16 [2560/4320 (59%)] Loss: 0.011605
+Train Epoch: 16 [3072/4320 (71%)] Loss: 0.062177
+Train Epoch: 16 [3584/4320 (83%)] Loss: 0.028092
+Train Epoch: 16 [4096/4320 (95%)] Loss: 0.033454
+    epoch          : 16
+    loss           : 0.044755868172026515
+    accuracy       : 0.9742647058823529
+    f1             : 0.9634583592414856
+    val_loss       : 0.2606326302184778
+    val_accuracy   : 0.8835346638655462
+    val_f1         : 0.8392452597618103
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch16.pth ...
+Train Epoch: 17 [0/4320 (0%)] Loss: 0.127972
+Train Epoch: 17 [512/4320 (12%)] Loss: 0.023444
+Train Epoch: 17 [1024/4320 (24%)] Loss: 0.102281
+Train Epoch: 17 [1536/4320 (36%)] Loss: 0.036567
+Train Epoch: 17 [2048/4320 (47%)] Loss: 0.079216
+Train Epoch: 17 [2560/4320 (59%)] Loss: 0.006741
+Train Epoch: 17 [3072/4320 (71%)] Loss: 0.114044
+Train Epoch: 17 [3584/4320 (83%)] Loss: 0.024846
+Train Epoch: 17 [4096/4320 (95%)] Loss: 0.006928
+    epoch          : 17
+    loss           : 0.03820690386997098
+    accuracy       : 0.9779411764705882
+    f1             : 0.9690062403678894
+    val_loss       : 0.22386704692069223
+    val_accuracy   : 0.8898371848739496
+    val_f1         : 0.8356793522834778
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch17.pth ...
+Train Epoch: 18 [0/4320 (0%)] Loss: 0.025646
+Train Epoch: 18 [512/4320 (12%)] Loss: 0.014794
+Train Epoch: 18 [1024/4320 (24%)] Loss: 0.044228
+Train Epoch: 18 [1536/4320 (36%)] Loss: 0.031818
+Train Epoch: 18 [2048/4320 (47%)] Loss: 0.026596
+Train Epoch: 18 [2560/4320 (59%)] Loss: 0.035286
+Train Epoch: 18 [3072/4320 (71%)] Loss: 0.034801
+Train Epoch: 18 [3584/4320 (83%)] Loss: 0.031744
+Train Epoch: 18 [4096/4320 (95%)] Loss: 0.022022
+    epoch          : 18
+    loss           : 0.04107194823582711
+    accuracy       : 0.9770220588235294
+    f1             : 0.9666998386383057
+    val_loss       : 0.2413144563050831
+    val_accuracy   : 0.89390756302521
+    val_f1         : 0.8501747250556946
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch18.pth ...
+Train Epoch: 19 [0/4320 (0%)] Loss: 0.011655
+Train Epoch: 19 [512/4320 (12%)] Loss: 0.011726
+Train Epoch: 19 [1024/4320 (24%)] Loss: 0.030637
+Train Epoch: 19 [1536/4320 (36%)] Loss: 0.028744
+Train Epoch: 19 [2048/4320 (47%)] Loss: 0.029486
+Train Epoch: 19 [2560/4320 (59%)] Loss: 0.029170
+Train Epoch: 19 [3072/4320 (71%)] Loss: 0.004084
+Train Epoch: 19 [3584/4320 (83%)] Loss: 0.055131
+Train Epoch: 19 [4096/4320 (95%)] Loss: 0.066835
+    epoch          : 19
+    loss           : 0.036220156662987876
+    accuracy       : 0.9811580882352942
+    f1             : 0.9723153710365295
+    val_loss       : 0.22354327711988897
+    val_accuracy   : 0.8985031512605042
+    val_f1         : 0.8562188744544983
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch19.pth ...
+Train Epoch: 20 [0/4320 (0%)] Loss: 0.047525
+Train Epoch: 20 [512/4320 (12%)] Loss: 0.022673
+Train Epoch: 20 [1024/4320 (24%)] Loss: 0.052285
+Train Epoch: 20 [1536/4320 (36%)] Loss: 0.011730
+Train Epoch: 20 [2048/4320 (47%)] Loss: 0.010777
+Train Epoch: 20 [2560/4320 (59%)] Loss: 0.030604
+Train Epoch: 20 [3072/4320 (71%)] Loss: 0.008376
+Train Epoch: 20 [3584/4320 (83%)] Loss: 0.010635
+Train Epoch: 20 [4096/4320 (95%)] Loss: 0.035086
+    epoch          : 20
+    loss           : 0.04003709334510324
+    accuracy       : 0.9800091911764706
+    f1             : 0.9726064205169678
+    val_loss       : 0.23855845235726414
+    val_accuracy   : 0.8907563025210083
+    val_f1         : 0.8461589813232422
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch20.pth ...
+Train Epoch: 21 [0/4320 (0%)] Loss: 0.034516
+Train Epoch: 21 [512/4320 (12%)] Loss: 0.020032
+Train Epoch: 21 [1024/4320 (24%)] Loss: 0.025313
+Train Epoch: 21 [1536/4320 (36%)] Loss: 0.195602
+Train Epoch: 21 [2048/4320 (47%)] Loss: 0.010524
+Train Epoch: 21 [2560/4320 (59%)] Loss: 0.024104
+Train Epoch: 21 [3072/4320 (71%)] Loss: 0.052225
+Train Epoch: 21 [3584/4320 (83%)] Loss: 0.003702
+Train Epoch: 21 [4096/4320 (95%)] Loss: 0.015390
+    epoch          : 21
+    loss           : 0.038173229289788974
+    accuracy       : 0.9793198529411765
+    f1             : 0.972008228302002
+    val_loss       : 0.21290788755697362
+    val_accuracy   : 0.9045430672268907
+    val_f1         : 0.8626849055290222
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch21.pth ...
+Train Epoch: 22 [0/4320 (0%)] Loss: 0.019803
+Train Epoch: 22 [512/4320 (12%)] Loss: 0.009045
+Train Epoch: 22 [1024/4320 (24%)] Loss: 0.027831
+Train Epoch: 22 [1536/4320 (36%)] Loss: 0.020349
+Train Epoch: 22 [2048/4320 (47%)] Loss: 0.055189
+Train Epoch: 22 [2560/4320 (59%)] Loss: 0.019093
+Train Epoch: 22 [3072/4320 (71%)] Loss: 0.032122
+Train Epoch: 22 [3584/4320 (83%)] Loss: 0.027731
+Train Epoch: 22 [4096/4320 (95%)] Loss: 0.104160
+    epoch          : 22
+    loss           : 0.0315940257620669
+    accuracy       : 0.9823069852941176
+    f1             : 0.975173830986023
+    val_loss       : 0.26047149673104286
+    val_accuracy   : 0.8967962184873949
+    val_f1         : 0.8577486872673035
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch22.pth ...
+Train Epoch: 23 [0/4320 (0%)] Loss: 0.047486
+Train Epoch: 23 [512/4320 (12%)] Loss: 0.029133
+Train Epoch: 23 [1024/4320 (24%)] Loss: 0.009386
+Train Epoch: 23 [1536/4320 (36%)] Loss: 0.097099
+Train Epoch: 23 [2048/4320 (47%)] Loss: 0.003851
+Train Epoch: 23 [2560/4320 (59%)] Loss: 0.003313
+Train Epoch: 23 [3072/4320 (71%)] Loss: 0.066026
+Train Epoch: 23 [3584/4320 (83%)] Loss: 0.055654
+Train Epoch: 23 [4096/4320 (95%)] Loss: 0.030207
+    epoch          : 23
+    loss           : 0.03487670585608987
+    accuracy       : 0.9802389705882353
+    f1             : 0.9730870723724365
+    val_loss       : 0.25856031477451324
+    val_accuracy   : 0.8940388655462185
+    val_f1         : 0.8536126017570496
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch23.pth ...
+Train Epoch: 24 [0/4320 (0%)] Loss: 0.005753
+Train Epoch: 24 [512/4320 (12%)] Loss: 0.044918
+Train Epoch: 24 [1024/4320 (24%)] Loss: 0.082325
+Train Epoch: 24 [1536/4320 (36%)] Loss: 0.006484
+Train Epoch: 24 [2048/4320 (47%)] Loss: 0.027657
+Train Epoch: 24 [2560/4320 (59%)] Loss: 0.027854
+Train Epoch: 24 [3072/4320 (71%)] Loss: 0.027309
+Train Epoch: 24 [3584/4320 (83%)] Loss: 0.009371
+Train Epoch: 24 [4096/4320 (95%)] Loss: 0.027565
+    epoch          : 24
+    loss           : 0.032752125640399754
+    accuracy       : 0.9813878676470589
+    f1             : 0.9733201265335083
+    val_loss       : 0.23087769089376226
+    val_accuracy   : 0.8962710084033613
+    val_f1         : 0.8569962382316589
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch24.pth ...
+Train Epoch: 25 [0/4320 (0%)] Loss: 0.072236
+Train Epoch: 25 [512/4320 (12%)] Loss: 0.011245
+Train Epoch: 25 [1024/4320 (24%)] Loss: 0.080882
+Train Epoch: 25 [1536/4320 (36%)] Loss: 0.026461
+Train Epoch: 25 [2048/4320 (47%)] Loss: 0.015324
+Train Epoch: 25 [2560/4320 (59%)] Loss: 0.039022
+Train Epoch: 25 [3072/4320 (71%)] Loss: 0.039537
+Train Epoch: 25 [3584/4320 (83%)] Loss: 0.012150
+Train Epoch: 25 [4096/4320 (95%)] Loss: 0.076363
+    epoch          : 25
+    loss           : 0.03573724986327922
+    accuracy       : 0.9793198529411765
+    f1             : 0.9715262055397034
+    val_loss       : 0.23116803607519934
+    val_accuracy   : 0.8961397058823529
+    val_f1         : 0.8481860756874084
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch25.pth ...
+Train Epoch: 26 [0/4320 (0%)] Loss: 0.036204
+Train Epoch: 26 [512/4320 (12%)] Loss: 0.002879
+Train Epoch: 26 [1024/4320 (24%)] Loss: 0.017202
+Train Epoch: 26 [1536/4320 (36%)] Loss: 0.004247
+Train Epoch: 26 [2048/4320 (47%)] Loss: 0.029383
+Train Epoch: 26 [2560/4320 (59%)] Loss: 0.019299
+Train Epoch: 26 [3072/4320 (71%)] Loss: 0.027391
+Train Epoch: 26 [3584/4320 (83%)] Loss: 0.015084
+Train Epoch: 26 [4096/4320 (95%)] Loss: 0.009642
+    epoch          : 26
+    loss           : 0.02562391196089961
+    accuracy       : 0.9855238970588235
+    f1             : 0.9798129796981812
+    val_loss       : 0.23985755071043968
+    val_accuracy   : 0.9073004201680672
+    val_f1         : 0.8732100129127502
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch26.pth ...
+Train Epoch: 27 [0/4320 (0%)] Loss: 0.011920
+Train Epoch: 27 [512/4320 (12%)] Loss: 0.028400
+Train Epoch: 27 [1024/4320 (24%)] Loss: 0.020912
+Train Epoch: 27 [1536/4320 (36%)] Loss: 0.006307
+Train Epoch: 27 [2048/4320 (47%)] Loss: 0.025573
+Train Epoch: 27 [2560/4320 (59%)] Loss: 0.054561
+Train Epoch: 27 [3072/4320 (71%)] Loss: 0.014769
+Train Epoch: 27 [3584/4320 (83%)] Loss: 0.010832
+Train Epoch: 27 [4096/4320 (95%)] Loss: 0.026123
+    epoch          : 27
+    loss           : 0.030914619287667686
+    accuracy       : 0.9836856617647058
+    f1             : 0.9763262271881104
+    val_loss       : 0.2165521370137439
+    val_accuracy   : 0.9021796218487395
+    val_f1         : 0.859645426273346
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch27.pth ...
+Train Epoch: 28 [0/4320 (0%)] Loss: 0.026514
+Train Epoch: 28 [512/4320 (12%)] Loss: 0.010424
+Train Epoch: 28 [1024/4320 (24%)] Loss: 0.059427
+Train Epoch: 28 [1536/4320 (36%)] Loss: 0.019604
+Train Epoch: 28 [2048/4320 (47%)] Loss: 0.020203
+Train Epoch: 28 [2560/4320 (59%)] Loss: 0.001320
+Train Epoch: 28 [3072/4320 (71%)] Loss: 0.005839
+Train Epoch: 28 [3584/4320 (83%)] Loss: 0.044264
+Train Epoch: 28 [4096/4320 (95%)] Loss: 0.020980
+    epoch          : 28
+    loss           : 0.03215842615806169
+    accuracy       : 0.9818474264705882
+    f1             : 0.9754407405853271
+    val_loss       : 0.20718341890503378
+    val_accuracy   : 0.9139968487394958
+    val_f1         : 0.8840616941452026
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch28.pth ...
+Train Epoch: 29 [0/4320 (0%)] Loss: 0.014261
+Train Epoch: 29 [512/4320 (12%)] Loss: 0.009357
+Train Epoch: 29 [1024/4320 (24%)] Loss: 0.010461
+Train Epoch: 29 [1536/4320 (36%)] Loss: 0.027772
+Train Epoch: 29 [2048/4320 (47%)] Loss: 0.002143
+Train Epoch: 29 [2560/4320 (59%)] Loss: 0.025998
+Train Epoch: 29 [3072/4320 (71%)] Loss: 0.004465
+Train Epoch: 29 [3584/4320 (83%)] Loss: 0.005742
+Train Epoch: 29 [4096/4320 (95%)] Loss: 0.011819
+    epoch          : 29
+    loss           : 0.02963360888294547
+    accuracy       : 0.9852941176470589
+    f1             : 0.9803268313407898
+    val_loss       : 0.24142351198722334
+    val_accuracy   : 0.904280462184874
+    val_f1         : 0.8632884621620178
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch29.pth ...
+Train Epoch: 30 [0/4320 (0%)] Loss: 0.012584
+Train Epoch: 30 [512/4320 (12%)] Loss: 0.027471
+Train Epoch: 30 [1024/4320 (24%)] Loss: 0.019119
+Train Epoch: 30 [1536/4320 (36%)] Loss: 0.025603
+Train Epoch: 30 [2048/4320 (47%)] Loss: 0.009383
+Train Epoch: 30 [2560/4320 (59%)] Loss: 0.011619
+Train Epoch: 30 [3072/4320 (71%)] Loss: 0.040316
+Train Epoch: 30 [3584/4320 (83%)] Loss: 0.007335
+Train Epoch: 30 [4096/4320 (95%)] Loss: 0.005631
+    epoch          : 30
+    loss           : 0.02718737660153933
+    accuracy       : 0.9829963235294118
+    f1             : 0.9775441288948059
+    val_loss       : 0.25903185939087586
+    val_accuracy   : 0.8975840336134454
+    val_f1         : 0.859402060508728
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch30.pth ...
+Train Epoch: 31 [0/4320 (0%)] Loss: 0.027640
+Train Epoch: 31 [512/4320 (12%)] Loss: 0.061024
+Train Epoch: 31 [1024/4320 (24%)] Loss: 0.034395
+Train Epoch: 31 [1536/4320 (36%)] Loss: 0.042095
+Train Epoch: 31 [2048/4320 (47%)] Loss: 0.026555
+Train Epoch: 31 [2560/4320 (59%)] Loss: 0.018196
+Train Epoch: 31 [3072/4320 (71%)] Loss: 0.043291
+Train Epoch: 31 [3584/4320 (83%)] Loss: 0.018079
+Train Epoch: 31 [4096/4320 (95%)] Loss: 0.082243
+    epoch          : 31
+    loss           : 0.031098500751849154
+    accuracy       : 0.9820772058823529
+    f1             : 0.975391149520874
+    val_loss       : 0.20843966217602
+    val_accuracy   : 0.9129464285714286
+    val_f1         : 0.8775602579116821
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch31.pth ...
+Train Epoch: 32 [0/4320 (0%)] Loss: 0.052659
+Train Epoch: 32 [512/4320 (12%)] Loss: 0.038276
+Train Epoch: 32 [1024/4320 (24%)] Loss: 0.044888
+Train Epoch: 32 [1536/4320 (36%)] Loss: 0.042149
+Train Epoch: 32 [2048/4320 (47%)] Loss: 0.018115
+Train Epoch: 32 [2560/4320 (59%)] Loss: 0.011813
+Train Epoch: 32 [3072/4320 (71%)] Loss: 0.001495
+Train Epoch: 32 [3584/4320 (83%)] Loss: 0.011866
+Train Epoch: 32 [4096/4320 (95%)] Loss: 0.022924
+    epoch          : 32
+    loss           : 0.02632686705157325
+    accuracy       : 0.9871323529411765
+    f1             : 0.981929361820221
+    val_loss       : 0.2108057814047617
+    val_accuracy   : 0.9145220588235294
+    val_f1         : 0.8766260743141174
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch32.pth ...
+Train Epoch: 33 [0/4320 (0%)] Loss: 0.004070
+Train Epoch: 33 [512/4320 (12%)] Loss: 0.004465
+Train Epoch: 33 [1024/4320 (24%)] Loss: 0.033834
+Train Epoch: 33 [1536/4320 (36%)] Loss: 0.010950
+Train Epoch: 33 [2048/4320 (47%)] Loss: 0.009809
+Train Epoch: 33 [2560/4320 (59%)] Loss: 0.003945
+Train Epoch: 33 [3072/4320 (71%)] Loss: 0.026515
+Train Epoch: 33 [3584/4320 (83%)] Loss: 0.113983
+Train Epoch: 33 [4096/4320 (95%)] Loss: 0.035228
+    epoch          : 33
+    loss           : 0.027307986637906116
+    accuracy       : 0.9848345588235294
+    f1             : 0.9782459139823914
+    val_loss       : 0.23493407666683197
+    val_accuracy   : 0.8965336134453782
+    val_f1         : 0.860035240650177
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch33.pth ...
+Train Epoch: 34 [0/4320 (0%)] Loss: 0.045102
+Train Epoch: 34 [512/4320 (12%)] Loss: 0.041304
+Train Epoch: 34 [1024/4320 (24%)] Loss: 0.058260
+Train Epoch: 34 [1536/4320 (36%)] Loss: 0.010945
+Train Epoch: 34 [2048/4320 (47%)] Loss: 0.028850
+Train Epoch: 34 [2560/4320 (59%)] Loss: 0.019592
+Train Epoch: 34 [3072/4320 (71%)] Loss: 0.011142
+Train Epoch: 34 [3584/4320 (83%)] Loss: 0.017032
+Train Epoch: 34 [4096/4320 (95%)] Loss: 0.032849
+    epoch          : 34
+    loss           : 0.026565501115435514
+    accuracy       : 0.9857536764705882
+    f1             : 0.9786876440048218
+    val_loss       : 0.221584050970919
+    val_accuracy   : 0.9061186974789917
+    val_f1         : 0.86962890625
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch34.pth ...
+Train Epoch: 35 [0/4320 (0%)] Loss: 0.018442
+Train Epoch: 35 [512/4320 (12%)] Loss: 0.015989
+Train Epoch: 35 [1024/4320 (24%)] Loss: 0.060416
+Train Epoch: 35 [1536/4320 (36%)] Loss: 0.006086
+Train Epoch: 35 [2048/4320 (47%)] Loss: 0.014163
+Train Epoch: 35 [2560/4320 (59%)] Loss: 0.037529
+Train Epoch: 35 [3072/4320 (71%)] Loss: 0.011897
+Train Epoch: 35 [3584/4320 (83%)] Loss: 0.008129
+Train Epoch: 35 [4096/4320 (95%)] Loss: 0.037196
+    epoch          : 35
+    loss           : 0.022417909733656628
+    accuracy       : 0.9857536764705882
+    f1             : 0.9805757999420166
+    val_loss       : 0.23843859968816533
+    val_accuracy   : 0.9086134453781513
+    val_f1         : 0.8781841993331909
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch35.pth ...
+Train Epoch: 36 [0/4320 (0%)] Loss: 0.076123
+Train Epoch: 36 [512/4320 (12%)] Loss: 0.003770
+Train Epoch: 36 [1024/4320 (24%)] Loss: 0.030579
+Train Epoch: 36 [1536/4320 (36%)] Loss: 0.012326
+Train Epoch: 36 [2048/4320 (47%)] Loss: 0.005197
+Train Epoch: 36 [2560/4320 (59%)] Loss: 0.001529
+Train Epoch: 36 [3072/4320 (71%)] Loss: 0.005093
+Train Epoch: 36 [3584/4320 (83%)] Loss: 0.035853
+Train Epoch: 36 [4096/4320 (95%)] Loss: 0.047083
+    epoch          : 36
+    loss           : 0.033361584480564276
+    accuracy       : 0.9806985294117647
+    f1             : 0.972896933555603
+    val_loss       : 0.21250439062714577
+    val_accuracy   : 0.9091386554621849
+    val_f1         : 0.8706644177436829
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch36.pth ...
+Train Epoch: 37 [0/4320 (0%)] Loss: 0.010472
+Train Epoch: 37 [512/4320 (12%)] Loss: 0.040906
+Train Epoch: 37 [1024/4320 (24%)] Loss: 0.010135
+Train Epoch: 37 [1536/4320 (36%)] Loss: 0.025233
+Train Epoch: 37 [2048/4320 (47%)] Loss: 0.018234
+Train Epoch: 37 [2560/4320 (59%)] Loss: 0.028935
+Train Epoch: 37 [3072/4320 (71%)] Loss: 0.025182
+Train Epoch: 37 [3584/4320 (83%)] Loss: 0.004381
+Train Epoch: 37 [4096/4320 (95%)] Loss: 0.048285
+    epoch          : 37
+    loss           : 0.03643548186793102
+    accuracy       : 0.9820772058823529
+    f1             : 0.9756319522857666
+    val_loss       : 0.19713770707740502
+    val_accuracy   : 0.9258140756302522
+    val_f1         : 0.8932437896728516
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch37.pth ...
+Saving current best: model_best.pth ...
+Train Epoch: 38 [0/4320 (0%)] Loss: 0.063342
+Train Epoch: 38 [512/4320 (12%)] Loss: 0.010102
+Train Epoch: 38 [1024/4320 (24%)] Loss: 0.003492
+Train Epoch: 38 [1536/4320 (36%)] Loss: 0.058929
+Train Epoch: 38 [2048/4320 (47%)] Loss: 0.007086
+Train Epoch: 38 [2560/4320 (59%)] Loss: 0.014884
+Train Epoch: 38 [3072/4320 (71%)] Loss: 0.082391
+Train Epoch: 38 [3584/4320 (83%)] Loss: 0.015729
+Train Epoch: 38 [4096/4320 (95%)] Loss: 0.006149
+    epoch          : 38
+    loss           : 0.02416498358327183
+    accuracy       : 0.9855238970588235
+    f1             : 0.9799667000770569
+    val_loss       : 0.24985057334689534
+    val_accuracy   : 0.9036239495798319
+    val_f1         : 0.8696616888046265
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch38.pth ...
+Train Epoch: 39 [0/4320 (0%)] Loss: 0.001548
+Train Epoch: 39 [512/4320 (12%)] Loss: 0.001609
+Train Epoch: 39 [1024/4320 (24%)] Loss: 0.019497
+Train Epoch: 39 [1536/4320 (36%)] Loss: 0.015240
+Train Epoch: 39 [2048/4320 (47%)] Loss: 0.007759
+Train Epoch: 39 [2560/4320 (59%)] Loss: 0.018705
+Train Epoch: 39 [3072/4320 (71%)] Loss: 0.002048
+Train Epoch: 39 [3584/4320 (83%)] Loss: 0.009804
+Train Epoch: 39 [4096/4320 (95%)] Loss: 0.019850
+    epoch          : 39
+    loss           : 0.017919039827949533
+    accuracy       : 0.9887408088235294
+    f1             : 0.9847554564476013
+    val_loss       : 0.20710699829985113
+    val_accuracy   : 0.9134716386554622
+    val_f1         : 0.8797177672386169
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch39.pth ...
+Train Epoch: 40 [0/4320 (0%)] Loss: 0.051414
+Train Epoch: 40 [512/4320 (12%)] Loss: 0.031138
+Train Epoch: 40 [1024/4320 (24%)] Loss: 0.011894
+Train Epoch: 40 [1536/4320 (36%)] Loss: 0.018802
+Train Epoch: 40 [2048/4320 (47%)] Loss: 0.024372
+Train Epoch: 40 [2560/4320 (59%)] Loss: 0.030847
+Train Epoch: 40 [3072/4320 (71%)] Loss: 0.001121
+Train Epoch: 40 [3584/4320 (83%)] Loss: 0.054651
+Train Epoch: 40 [4096/4320 (95%)] Loss: 0.037987
+    epoch          : 40
+    loss           : 0.02097488417990355
+    accuracy       : 0.9887408088235294
+    f1             : 0.9857516884803772
+    val_loss       : 0.21055656233254602
+    val_accuracy   : 0.9184611344537815
+    val_f1         : 0.8864599466323853
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch40.pth ...
+Train Epoch: 41 [0/4320 (0%)] Loss: 0.012098
+Train Epoch: 41 [512/4320 (12%)] Loss: 0.099331
+Train Epoch: 41 [1024/4320 (24%)] Loss: 0.008021
+Train Epoch: 41 [1536/4320 (36%)] Loss: 0.020324
+Train Epoch: 41 [2048/4320 (47%)] Loss: 0.010919
+Train Epoch: 41 [2560/4320 (59%)] Loss: 0.001869
+Train Epoch: 41 [3072/4320 (71%)] Loss: 0.022741
+Train Epoch: 41 [3584/4320 (83%)] Loss: 0.001685
+Train Epoch: 41 [4096/4320 (95%)] Loss: 0.008623
+    epoch          : 41
+    loss           : 0.02381174836131429
+    accuracy       : 0.9862132352941176
+    f1             : 0.9799671173095703
+    val_loss       : 0.21590073362869375
+    val_accuracy   : 0.9195115546218487
+    val_f1         : 0.8879202604293823
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch41.pth ...
+Train Epoch: 42 [0/4320 (0%)] Loss: 0.019431
+Train Epoch: 42 [512/4320 (12%)] Loss: 0.008580
+Train Epoch: 42 [1024/4320 (24%)] Loss: 0.008091
+Train Epoch: 42 [1536/4320 (36%)] Loss: 0.050590
+Train Epoch: 42 [2048/4320 (47%)] Loss: 0.010107
+Train Epoch: 42 [2560/4320 (59%)] Loss: 0.063624
+Train Epoch: 42 [3072/4320 (71%)] Loss: 0.026530
+Train Epoch: 42 [3584/4320 (83%)] Loss: 0.018689
+Train Epoch: 42 [4096/4320 (95%)] Loss: 0.009372
+    epoch          : 42
+    loss           : 0.023541812466539663
+    accuracy       : 0.9862132352941176
+    f1             : 0.9797959327697754
+    val_loss       : 0.20228405515937245
+    val_accuracy   : 0.9216123949579832
+    val_f1         : 0.8913006782531738
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch42.pth ...
+Train Epoch: 43 [0/4320 (0%)] Loss: 0.001532
+Train Epoch: 43 [512/4320 (12%)] Loss: 0.005106
+Train Epoch: 43 [1024/4320 (24%)] Loss: 0.010834
+Train Epoch: 43 [1536/4320 (36%)] Loss: 0.004787
+Train Epoch: 43 [2048/4320 (47%)] Loss: 0.006577
+Train Epoch: 43 [2560/4320 (59%)] Loss: 0.033823
+Train Epoch: 43 [3072/4320 (71%)] Loss: 0.009300
+Train Epoch: 43 [3584/4320 (83%)] Loss: 0.004466
+Train Epoch: 43 [4096/4320 (95%)] Loss: 0.106351
+    epoch          : 43
+    loss           : 0.02329722102662987
+    accuracy       : 0.98828125
+    f1             : 0.984265923500061
+    val_loss       : 0.22298088275334416
+    val_accuracy   : 0.9086134453781513
+    val_f1         : 0.8778864145278931
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch43.pth ...
+Train Epoch: 44 [0/4320 (0%)] Loss: 0.005636
+Train Epoch: 44 [512/4320 (12%)] Loss: 0.001651
+Train Epoch: 44 [1024/4320 (24%)] Loss: 0.003221
+Train Epoch: 44 [1536/4320 (36%)] Loss: 0.025172
+Train Epoch: 44 [2048/4320 (47%)] Loss: 0.020944
+Train Epoch: 44 [2560/4320 (59%)] Loss: 0.008521
+Train Epoch: 44 [3072/4320 (71%)] Loss: 0.009070
+Train Epoch: 44 [3584/4320 (83%)] Loss: 0.065435
+Train Epoch: 44 [4096/4320 (95%)] Loss: 0.002246
+    epoch          : 44
+    loss           : 0.02122531524133485
+    accuracy       : 0.9871323529411765
+    f1             : 0.9822611212730408
+    val_loss       : 0.22468837876530254
+    val_accuracy   : 0.9083508403361344
+    val_f1         : 0.8681572675704956
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch44.pth ...
+Train Epoch: 45 [0/4320 (0%)] Loss: 0.017064
+Train Epoch: 45 [512/4320 (12%)] Loss: 0.002888
+Train Epoch: 45 [1024/4320 (24%)] Loss: 0.036183
+Train Epoch: 45 [1536/4320 (36%)] Loss: 0.007952
+Train Epoch: 45 [2048/4320 (47%)] Loss: 0.030538
+Train Epoch: 45 [2560/4320 (59%)] Loss: 0.001917
+Train Epoch: 45 [3072/4320 (71%)] Loss: 0.015261
+Train Epoch: 45 [3584/4320 (83%)] Loss: 0.005023
+Train Epoch: 45 [4096/4320 (95%)] Loss: 0.034334
+    epoch          : 45
+    loss           : 0.020065224457271946
+    accuracy       : 0.9894301470588235
+    f1             : 0.9848119020462036
+    val_loss       : 0.2276782511788256
+    val_accuracy   : 0.9201680672268907
+    val_f1         : 0.8866623044013977
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch45.pth ...
+Train Epoch: 46 [0/4320 (0%)] Loss: 0.006660
+Train Epoch: 46 [512/4320 (12%)] Loss: 0.027522
+Train Epoch: 46 [1024/4320 (24%)] Loss: 0.045848
+Train Epoch: 46 [1536/4320 (36%)] Loss: 0.002248
+Train Epoch: 46 [2048/4320 (47%)] Loss: 0.037391
+Train Epoch: 46 [2560/4320 (59%)] Loss: 0.063555
+Train Epoch: 46 [3072/4320 (71%)] Loss: 0.037411
+Train Epoch: 46 [3584/4320 (83%)] Loss: 0.012848
+Train Epoch: 46 [4096/4320 (95%)] Loss: 0.047682
+    epoch          : 46
+    loss           : 0.025264934131615412
+    accuracy       : 0.9869025735294118
+    f1             : 0.9826662540435791
+    val_loss       : 0.21986492898534327
+    val_accuracy   : 0.9184611344537815
+    val_f1         : 0.8902610540390015
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch46.pth ...
+Train Epoch: 47 [0/4320 (0%)] Loss: 0.003952
+Train Epoch: 47 [512/4320 (12%)] Loss: 0.010071
+Train Epoch: 47 [1024/4320 (24%)] Loss: 0.017041
+Train Epoch: 47 [1536/4320 (36%)] Loss: 0.002292
+Train Epoch: 47 [2048/4320 (47%)] Loss: 0.009844
+Train Epoch: 47 [2560/4320 (59%)] Loss: 0.005962
+Train Epoch: 47 [3072/4320 (71%)] Loss: 0.032679
+Train Epoch: 47 [3584/4320 (83%)] Loss: 0.004629
+Train Epoch: 47 [4096/4320 (95%)] Loss: 0.011924
+    epoch          : 47
+    loss           : 0.02288937755528262
+    accuracy       : 0.9859834558823529
+    f1             : 0.9813346862792969
+    val_loss       : 0.2321525654372047
+    val_accuracy   : 0.913077731092437
+    val_f1         : 0.8751772046089172
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch47.pth ...
+Train Epoch: 48 [0/4320 (0%)] Loss: 0.016725
+Train Epoch: 48 [512/4320 (12%)] Loss: 0.019674
+Train Epoch: 48 [1024/4320 (24%)] Loss: 0.007937
+Train Epoch: 48 [1536/4320 (36%)] Loss: 0.016393
+Train Epoch: 48 [2048/4320 (47%)] Loss: 0.040908
+Train Epoch: 48 [2560/4320 (59%)] Loss: 0.008515
+Train Epoch: 48 [3072/4320 (71%)] Loss: 0.051485
+Train Epoch: 48 [3584/4320 (83%)] Loss: 0.018067
+Train Epoch: 48 [4096/4320 (95%)] Loss: 0.004277
+    epoch          : 48
+    loss           : 0.01840168925050153
+    accuracy       : 0.9894301470588235
+    f1             : 0.985629141330719
+    val_loss       : 0.23595414551741936
+    val_accuracy   : 0.9108455882352942
+    val_f1         : 0.8811324834823608
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch48.pth ...
+Train Epoch: 49 [0/4320 (0%)] Loss: 0.006550
+Train Epoch: 49 [512/4320 (12%)] Loss: 0.009040
+Train Epoch: 49 [1024/4320 (24%)] Loss: 0.012631
+Train Epoch: 49 [1536/4320 (36%)] Loss: 0.021789
+Train Epoch: 49 [2048/4320 (47%)] Loss: 0.002564
+Train Epoch: 49 [2560/4320 (59%)] Loss: 0.002841
+Train Epoch: 49 [3072/4320 (71%)] Loss: 0.044451
+Train Epoch: 49 [3584/4320 (83%)] Loss: 0.005100
+Train Epoch: 49 [4096/4320 (95%)] Loss: 0.028194
+    epoch          : 49
+    loss           : 0.01707000922247329
+    accuracy       : 0.9875919117647058
+    f1             : 0.9830174446105957
+    val_loss       : 0.22095749658696792
+    val_accuracy   : 0.9214810924369747
+    val_f1         : 0.8896241784095764
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch49.pth ...
+Train Epoch: 50 [0/4320 (0%)] Loss: 0.000666
+Train Epoch: 50 [512/4320 (12%)] Loss: 0.038049
+Train Epoch: 50 [1024/4320 (24%)] Loss: 0.046536
+Train Epoch: 50 [1536/4320 (36%)] Loss: 0.025678
+Train Epoch: 50 [2048/4320 (47%)] Loss: 0.006783
+Train Epoch: 50 [2560/4320 (59%)] Loss: 0.025008
+Train Epoch: 50 [3072/4320 (71%)] Loss: 0.037337
+Train Epoch: 50 [3584/4320 (83%)] Loss: 0.065569
+Train Epoch: 50 [4096/4320 (95%)] Loss: 0.032530
+    epoch          : 50
+    loss           : 0.019171189245860337
+    accuracy       : 0.9892003676470589
+    f1             : 0.9862633943557739
+    val_loss       : 0.201479721814394
+    val_accuracy   : 0.9242384453781513
+    val_f1         : 0.8947740197181702
+Saving checkpoint: saved/models/none_mask_age/0831_024947/checkpoint-epoch50.pth ...

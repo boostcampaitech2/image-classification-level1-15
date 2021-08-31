@@ -1,0 +1,46 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.12.1
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.5
+    start_time: 1630379954
+    t:
+      1:
+      - 1
+      - 5
+      2:
+      - 1
+      - 5
+      4: 3.8.5
+      5: 0.12.1
+      8:
+      - 5
+batch_size:
+  desc: null
+  value: 128
+epoch:
+  desc: null
+  value: 50
+label:
+  desc: null
+  value: age
+loss:
+  desc: null
+  value: age_cross_entropy_loss
+lr:
+  desc: null
+  value: 0.005
+name:
+  desc: null
+  value: mask_age
+optimizer:
+  desc: null
+  value: SGD
+pretrained_model:
+  desc: null
+  value: efficientnet_b1
