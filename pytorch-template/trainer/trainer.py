@@ -3,6 +3,11 @@ import torch
 from torchvision.utils import make_grid
 from base import BaseTrainer
 from utils import inf_loop, MetricTracker
+from model import metric
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+import torch.nn.functional as F
 
 
 class Trainer(BaseTrainer):
@@ -43,9 +48,14 @@ class Trainer(BaseTrainer):
         self.model.train()
         self.train_metrics.reset()
         label_name = self.config['arch']['args']['label_name']
-        for batch_idx, (data, target, gender, age, mask) in enumerate(self.data_loader):
+        # for batch_idx, (data, target, gender, age, mask) in enumerate(self.data_loader):
+        for batch_idx, (images, target, gender, age, mask) in enumerate(self.data_loader):
+            images_all = torch.cat(images, 0).to(self.device)
+            logits_all = self.model(images_all)
+            logits_clean, logits_aug1, logits_aug2 = torch.split(
+                logits_all, images[0].size(0))
 
-            data = data.to(self.device)
+            # data = data.to(self.device)
             if label_name == 'gender':
                 gender = gender.to(self.device)
             elif label_name == 'age':
@@ -56,21 +66,50 @@ class Trainer(BaseTrainer):
                 target = target.to(self.device)
 
             self.optimizer.zero_grad()
-            output = self.model(data)
+            # output = self.model(data)
+
+            # if label_name == 'gender':
+            #     self.criterion = torch.nn.CrossEntropyLoss(
+            #         weight=torch.tensor([1.5, 1.0]).to(self.device))
+            #     loss = self.criterion(output, gender)
+            # elif label_name == 'age':
+            #     self.criterion = torch.nn.CrossEntropyLoss(
+            #         weight=torch.tensor([1.6, 3.6, 4.7]).to(self.device))
+            #     loss = self.criterion(output, age)
+            # elif label_name == 'mask':
+            #     self.criterion = torch.nn.CrossEntropyLoss(
+            #         weight=torch.tensor([1., 2., 2.]).to(self.device))
+            #     loss = self.criterion(output, mask)
+            # elif label_name == 'total':
+            #     self.criterion = torch.nn.BCEWithLogitsLoss()
+            #     loss = self.criterion(output, target)
             if label_name == 'gender':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1.5, 1.0]).to(self.device))
-                loss = self.criterion(output, gender)
+                loss = self.criterion(logits_clean, gender)
             elif label_name == 'age':
                 self.criterion = torch.nn.CrossEntropyLoss(
-                    weight=torch.tensor([1., 1., 6.]).to(self.device))
-                loss = self.criterion(output, age)
+                    weight=torch.tensor([1.6, 3.6, 4.7]).to(self.device))
+                loss = self.criterion(logits_clean, age)
             elif label_name == 'mask':
                 self.criterion = torch.nn.CrossEntropyLoss(
                     weight=torch.tensor([1., 2., 2.]).to(self.device))
-                loss = self.criterion(output, mask)
+                loss = self.criterion(logits_clean, mask)
             elif label_name == 'total':
-                loss = self.criterion(output, mask)
+                self.criterion = torch.nn.BCEWithLogitsLoss()
+                loss = self.criterion(logits_clean, mask)
+
+            p_clean, p_aug1, p_aug2 = F.softmax(
+                logits_clean, dim=1), F.softmax(
+                    logits_aug1, dim=1), F.softmax(
+                        logits_aug2, dim=1)
+
+            p_mixture = torch.clamp(
+                (p_clean + p_aug1 + p_aug2) / 3., 1e-7, 1).log()
+            loss += 12 * (F.kl_div(p_mixture, p_clean, reduction='batchmean') +
+                          F.kl_div(p_mixture, p_aug1, reduction='batchmean') +
+                          F.kl_div(p_mixture, p_aug2, reduction='batchmean')) / 3.
+
             loss.backward()
             self.optimizer.step()
 
@@ -79,14 +118,20 @@ class Trainer(BaseTrainer):
             for met in self.metric_ftns:
                 if label_name == 'gender':
                     self.train_metrics.update(
-                        met.__name__, met(output, gender))
+                        met.__name__, met(logits_clean, gender))
+                    # met.__name__, met(output, gender))
                 elif label_name == 'age':
-                    self.train_metrics.update(met.__name__, met(output, age))
+                    self.train_metrics.update(
+                        met.__name__, met(logits_clean, age))
+                    # self.train_metrics.update(met.__name__, met(output, age))
                 elif label_name == 'mask':
-                    self.train_metrics.update(met.__name__, met(output, mask))
+                    self.train_metrics.update(
+                        met.__name__, met(logits_clean, mask))
+                    # self.train_metrics.update(met.__name__, met(output, mask))
                 elif label_name == 'total':
                     self.train_metrics.update(
-                        met.__name__, met(output, target))
+                        met.__name__, met(logits_clean, target))
+                    # met.__name__, met(output, target))
 
             if batch_idx % self.log_step == 0:
                 self.logger.debug('Train Epoch: {} {} Loss: {:.6f}'.format(
@@ -94,7 +139,8 @@ class Trainer(BaseTrainer):
                     self._progress(batch_idx),
                     loss.item()))
                 self.writer.add_image('input', make_grid(
-                    data.cpu(), nrow=8, normalize=True))
+                    images_all.cpu(), nrow=8, normalize=True))
+                # data.cpu(), nrow=8, normalize=True))
 
             if batch_idx == self.len_epoch:
                 break
@@ -118,9 +164,14 @@ class Trainer(BaseTrainer):
         self.model.eval()
         self.valid_metrics.reset()
         label_name = self.config['arch']['args']['label_name']
+        # NOTE: AugMix
         with torch.no_grad():
-            for batch_idx, (data, target, gender, age, mask) in enumerate(self.valid_data_loader):
-                data = data.to(self.device)
+            for batch_idx, (images, target, gender, age, mask) in enumerate(self.valid_data_loader):
+                images_all = torch.cat(images, 0).to(self.device)
+                logits_all = self.model(images_all)
+                logits_clean, logits_aug1, logits_aug2 = torch.split(
+                    logits_all, images[0].size(0))
+
                 if label_name == 'gender':
                     gender = gender.to(self.device)
                 elif label_name == 'age':
@@ -130,15 +181,15 @@ class Trainer(BaseTrainer):
                 elif label_name == 'total':
                     target = target.to(self.device)
 
-                output = self.model(data)
                 if label_name == 'gender':
-                    loss = self.criterion(output, gender)
+                    loss = self.criterion(logits_clean, gender)
                 elif label_name == 'age':
-                    loss = self.criterion(output, age)
+                    loss = self.criterion(logits_clean, age)
                 elif label_name == 'mask':
-                    loss = self.criterion(output, mask)
+                    loss = self.criterion(logits_clean, mask)
                 elif label_name == 'total':
-                    loss = self.criterion(output, target)
+                    self.criterion = torch.nn.BCEWithLogitsLoss()
+                    loss = self.criterion(logits_clean, target)
 
                 self.writer.set_step(
                     (epoch - 1) * len(self.valid_data_loader) + batch_idx, 'valid')
@@ -146,19 +197,83 @@ class Trainer(BaseTrainer):
                 for met in self.metric_ftns:
                     if label_name == 'gender':
                         self.valid_metrics.update(
-                            met.__name__, met(output, gender))
+                            met.__name__, met(logits_clean, gender))
                     elif label_name == 'age':
                         self.valid_metrics.update(
-                            met.__name__, met(output, age))
+                            met.__name__, met(logits_clean, age))
                     elif label_name == 'mask':
                         self.valid_metrics.update(
-                            met.__name__, met(output, mask))
+                            met.__name__, met(logits_clean, mask))
                     elif label_name == 'total':
                         self.valid_metrics.update(
-                            met.__name__, met(output, target))
+                            met.__name__, met(logits_clean, target))
 
                 self.writer.add_image('input', make_grid(
-                    data.cpu(), nrow=8, normalize=True))
+                    images_all.cpu(), nrow=8, normalize=True))
+
+        # # NOTE: Origin
+        # with torch.no_grad():
+        #     for batch_idx, (data, target, gender, age, mask) in enumerate(self.valid_data_loader):
+        #         data = data.to(self.device)
+        #         if label_name == 'gender':
+        #             gender = gender.to(self.device)
+        #         elif label_name == 'age':
+        #             age = age.to(self.device)
+        #         elif label_name == 'mask':
+        #             mask = mask.to(self.device)
+        #         elif label_name == 'total':
+        #             target = target.to(self.device)
+
+        #         output = self.model(data)
+        #         if label_name == 'gender':
+        #             loss = self.criterion(output, gender)
+        #         elif label_name == 'age':
+        #             loss = self.criterion(output, age)
+        #         elif label_name == 'mask':
+        #             loss = self.criterion(output, mask)
+        #         elif label_name == 'total':
+        #             self.criterion = torch.nn.BCEWithLogitsLoss()
+        #             loss = self.criterion(output, target)
+
+        #         self.writer.set_step(
+        #             (epoch - 1) * len(self.valid_data_loader) + batch_idx, 'valid')
+        #         self.valid_metrics.update('loss', loss.item())
+        #         for met in self.metric_ftns:
+        #             if label_name == 'gender':
+        #                 self.valid_metrics.update(
+        #                     met.__name__, met(output, gender))
+        #             elif label_name == 'age':
+        #                 self.valid_metrics.update(
+        #                     met.__name__, met(output, age))
+        #             elif label_name == 'mask':
+        #                 self.valid_metrics.update(
+        #                     met.__name__, met(output, mask))
+        #             elif label_name == 'total':
+        #                 self.valid_metrics.update(
+        #                     met.__name__, met(output, target))
+
+        #         self.writer.add_image('input', make_grid(
+        #             data.cpu(), nrow=8, normalize=True))
+
+        # NOTE: Confusion Matrix
+                # if label_name == 'gender':
+                #     target = gender
+                # elif label_name == 'age':
+                #     target = age
+                # elif label_name == 'mask':
+                #     target = mask
+                # elif label_name == 'total':
+                #     target = target
+
+                # conf_mat = confusion_matrix(
+                #     target.cpu(), torch.argmax(output, dim=1).cpu())
+                # fig = plt.figure()
+                # sns.heatmap(conf_mat, cmap=plt.cm.Blues, annot=True, fmt='g')
+                # plt.show()
+                # plt.xlabel('predicted label')
+                # plt.ylabel('true label')
+                # self.writer.add_figure('fig', fig)
+        # self.valid_metrics.update('f1', metric.f1(full_output, full_target))
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():
