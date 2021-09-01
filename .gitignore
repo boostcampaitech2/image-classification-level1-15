@@ -6,3 +6,5 @@ saved/
 .vscode
 nohup.out
 .venv
+config/
+wandb
