@@ -1,5 +1,4 @@
 import argparse
-from cv2 import Algorithm
 import torch
 from tqdm import tqdm
 import data_loader.data_loaders as module_data
@@ -14,8 +13,9 @@ from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import albumentations.pytorch
 import numpy as np
-
-
+from sklearn.metrics import f1_score
+import sys
+input = sys.stdin.readline
 def init_models(config):
     models = [
         config.eval_init_obj('arch', module_arch, 1),
@@ -60,14 +60,10 @@ def get_saved_model_state_dict(latest_saved_model_paths):
 
 def test_time_augmentation(model1, model2, model3, images):
     images = torch.split(images, 3, dim=1)
-
-
     list_gender = []
     list_age = []
     list_mask = []
-
     for i in range(len(images)):
-
         if i == 0:
             pred_gender = model1(images[i])
             pred_age = model2(images[i])
@@ -75,13 +71,11 @@ def test_time_augmentation(model1, model2, model3, images):
             list_gender.append(pred_gender)
             list_age.append(pred_age)
             list_mask.append(pred_mask)
-
         else:
             pred_gender = model1(images[i])
-            #print('test',pred_gender.shape)
+            # print('test',pred_gender.shape)
             pred_age = model2(images[i])
             pred_mask = model3(images[i])
-
             list_gender.append(pred_gender)
             list_age.append(pred_age)
             list_mask.append(pred_mask)
@@ -89,17 +83,14 @@ def test_time_augmentation(model1, model2, model3, images):
     preds_gender = torch.stack(list_gender, dim=2)
     preds_age = torch.stack(list_age, dim=2)
     preds_mask = torch.stack(list_mask, dim=2)
-
-    print('-',preds_gender.shape)
-
+    # print('-',preds_gender.shape)
     preds_gender = torch.mean(preds_gender, dim=2)
     preds_age = torch.mean(preds_age, dim=2)
-    preds_mask = torch.mean(preds_mask, dim=2)  
-
-    print(preds_gender.shape)
-    #print(preds_gender)
-
+    preds_mask = torch.mean(preds_mask, dim=2)
+    # print(preds_gender.shape)
+    # print(preds_gender)
     return preds_gender, preds_age, preds_mask
+
 
 class EvalDataset(Dataset):
     def __init__(self, img_paths, augs, transform):
@@ -122,39 +113,56 @@ class EvalDataset(Dataset):
         return len(self.img_paths)
 
 
-def main(config):
-    test_dir = './data/input/data/eval'
-    image_dir = os.path.join(test_dir, 'crop_images')
-    submission = pd.read_csv(os.path.join(test_dir, 'info.csv'))
+def f1(output, target):
+    # output = output.argmax(dim=1)
+    return f1_score(target, output, average='macro')
 
-    image_paths = [os.path.join(image_dir, img_id)
-                   for img_id in submission.ImageID]
+
+def main(config):
+    age_list = gender = list(map(int, input().rstrip().split(',')))
+
+    # test_dir = './data/input/data/eval'
+    # image_dir = os.path.join(test_dir, 'crop_images')
+    # submission = pd.read_csv(os.path.join(test_dir, 'info.csv'))
+
+    # image_paths = [os.path.join(image_dir, img_id)
+    #                for img_id in submission.ImageID]
+
+    val_dir = './data/input/data'
+    image_dir = os.path.join(val_dir, 'train/crop_images')
+    val_split = pd.read_csv(os.path.join(
+        val_dir, 'f1.csv'))
+
+    number = ['mask3', 'mask2', 'mask5', 'mask4', 'incorrect_mask', 'normal', 'mask1']
+    image_paths = [os.path.join(image_dir, img_id + '/' + number[i % 7] + '.jpg')
+                   for i, img_id in enumerate(val_split.folder)]
+    # answer = []
+    # print(image_paths)
+    # exit(0)
     transform = albumentations.Compose([
         albumentations.Resize(224, 224),
         albumentations.Normalize(
             mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
         albumentations.pytorch.transforms.ToTensorV2()
     ])
+
     augs = [
-        #albumentations.CoarseDropout(always_apply=False, p=1.0, max_holes=34, max_height=14, max_width=14, min_holes=20, min_height=1, min_width=1)
-        #albumentations.RandomRain(always_apply=False, p=1.0, slant_lower=-19, slant_upper=20, drop_length=8, drop_width=1, drop_color=(0, 0, 0), blur_value=1, brightness_coefficient=1.0, rain_type='drizzle')
-        #albumentations.GridDistortion(always_apply=False, p=0.5, num_steps=1, distort_limit=(-0.029999999329447746, 0.05000000074505806), interpolation=2, border_mode=0, value=(0, 0, 0), mask_value=None)
-        #albumentations.ElasticTransform(always_apply=False, p=0.5, alpha=0.20000000298023224, sigma=3.359999895095825, alpha_affine=2.009999990463257, interpolation=1, border_mode=1, value=(0, 0, 0), mask_value=None, approximate=False)
-        #albumentations.OpticalDistortion(always_apply=False, p=1.0, distort_limit=(-0.5199999809265137, 0.5199999809265137), shift_limit=(-0.08999999612569809, -0.03999999910593033), interpolation=2, border_mode=1, value=(0, 0, 0), mask_value=None)
-        #albumentations.ImageCompression(always_apply=False, p=1., quality_lower=56, quality_upper=100, compression_type=1)
-        #albumentations.Downscale(always_apply=False, p=1., scale_min=0.699999988079071, scale_max=0.9900000095367432, interpolation=2)
-        #albumentations.RandomFog(always_apply=False, p=1.0, fog_coef_lower=0.14000000059604645, fog_coef_upper=0.2800000011920929, alpha_coef=0.1899999976158142)
-        #albumentations.Blur(always_apply=False, p=1.0, blur_limit=(3, 3))
+        #albumentations.CLAHE(always_apply=False, p=1.0, clip_limit=(1, 2), tile_grid_size=(3, 3))
         #albumentations.Equalize(always_apply=False, p=1., mode='cv', by_channels=False)
-        albumentations.CLAHE(always_apply=False, p=1.0, clip_limit=(1, 2), tile_grid_size=(3, 3)),
-        albumentations.RandomBrightnessContrast(always_apply=False, p=1.0, brightness_limit=(-0.12999999523162842, 0.10999999940395355), contrast_limit=(-0.11999999731779099, 0.10999999940395355), brightness_by_max=True),
-        albumentations.HueSaturationValue(always_apply=False, p=1.0, hue_shift_limit=(-11, 8), sat_shift_limit=(-23, 11), val_shift_limit=(-7, 17)),
-        albumentations.HorizontalFlip()
+        #albumentations.Blur(always_apply=False, p=1.0, blur_limit=(3, 3))
+        #albumentations.RandomFog(always_apply=False, p=1.0, fog_coef_lower=0.14000000059604645, fog_coef_upper=0.2800000011920929, alpha_coef=0.1899999976158142)
+        #albumentations.Downscale(always_apply=False, p=1., scale_min=0.699999988079071, scale_max=0.9900000095367432, interpolation=2)
+        #albumentations.HueSaturationValue(always_apply=False, p=1.0, hue_shift_limit=(-11, 8), sat_shift_limit=(-23, 11), val_shift_limit=(-7, 17))
+        #albumentations.MultiplicativeNoise(always_apply=False, p=1.0, multiplier=(0.8899999856948853, 1.149999976158142), per_channel=True, elementwise=True)
+        albumentations.RGBShift(always_apply=False, p=1.0, r_shift_limit=(-12, 12), g_shift_limit=(-12, 12), b_shift_limit=(-14, 10))
+
     ]
+
     testset = EvalDataset(image_paths, augs, transform)
+
     data_loader = DataLoader(testset, batch_size=64, shuffle=False)
 
-    print()
+    # print()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model1, model2, model3 = init_models(config)
@@ -175,15 +183,21 @@ def main(config):
     model2.eval()
     model3.eval()
 
+    # submission = pd.read_csv(
+    #     config['data_loader']['args']['data_dir'] + 'eval/info.csv')
+
     gender_preds = []
     age_preds = []
     mask_preds = []
 
     with torch.no_grad():
         for i, images in enumerate(tqdm(data_loader)):
+
             images = images.to(device)
+            # print(f'image {images.shape}')
             pred_gender, pred_age, pred_mask = test_time_augmentation(
                 model1, model2, model3, images)
+            # print(f'shape !!!!!!! {pred_gender.shape}')
             pred1 = pred_gender.argmax(dim=-1)
             pred2 = pred_age.argmax(dim=-1)
             pred3 = pred_mask.argmax(dim=-1)
@@ -191,24 +205,22 @@ def main(config):
             gender_preds.extend(pred1.cpu().numpy())
             age_preds.extend(pred2.cpu().numpy())
             mask_preds.extend(pred3.cpu().numpy())
-            # gender_preds.append(pred1.cpu().numpy())
-            # age_preds.append(pred2.cpu().numpy())
-            # mask_preds.append(pred3.cpu().numpy())
-
             # if i == 2:
-            #      break
+            #     break
     CLASS_DICT = {
         '000': 0, '001': 1, '002': 2, '010': 3, '011': 4, '012': 5,
         '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
         '200': 12, '201': 13, '202': 14, '210': 15, '211': 16, '212': 17
     }
+    # print(gender_preds)
+    print(f1(age_preds, age_list))
 
     preds = zip(gender_preds, age_preds, mask_preds)
     labels = [CLASS_DICT[''.join(map(str, [mask, gender, age]))]
               for gender, age, mask in preds]
 
-    submission['ans'] = labels
-    submission.to_csv('tta_test/tta_double/clahe+hsv3.csv', index=False)
+    # submission['ans'] = labels
+    # submission.to_csv('./infinite_test/8_1.csv', index=False)
 
 
 if __name__ == '__main__':
