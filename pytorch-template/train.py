@@ -10,6 +10,7 @@ from parse_config import ConfigParser
 from trainer import Trainer
 from utils import prepare_device
 from custom_dataset import CustomDatasetFromImages, CustomValidDatasetFromImages
+import wandb
 
 # fix random seeds for reproducibility
 SEED = 123
@@ -20,6 +21,8 @@ np.random.seed(SEED)
 
 
 def main(config):
+    wandb.init(project='p-stage1', entity='l-yohai')
+
     logger = config.get_logger('train')
 
     # setup data_loader instances
@@ -39,6 +42,7 @@ def main(config):
 
     # get function handles of loss and metrics
     criterion = getattr(module_loss, config['loss'])
+    # criterion = module_loss.LabelSmoothingLoss()
     metrics = [getattr(module_metric, met) for met in config['metrics']]
 
     # build optimizer, learning rate scheduler. delete every lines containing lr_scheduler for disabling scheduler
@@ -46,6 +50,12 @@ def main(config):
     optimizer = config.init_obj('optimizer', torch.optim, trainable_params)
     lr_scheduler = config.init_obj(
         'lr_scheduler', torch.optim.lr_scheduler, optimizer)
+
+    wandb.config.update({'name': config['name'], 'label': config['arch']['args']['label_name'],
+                        'pretrained_model': config['arch']['args']['pretrained_model'],
+                         'batch_size': config['data_loader']['args']['batch_size'],
+                         'optimizer': config['optimizer']['type'], 'loss': config['loss'],
+                         'lr': config['optimizer']['args']['lr'], 'epoch': config['trainer']['epochs']})
 
     trainer = Trainer(model, criterion, metrics, optimizer,
                       config=config,
