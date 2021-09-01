@@ -20,19 +20,46 @@ transform_list = [
         A.Rotate(limit=20, p=1),
     ]),
     A.Compose([
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
         A.Rotate(limit=20, p=1),
         A.CenterCrop(height=358, width=268, p=1),
     ]),
     A.Compose([
         A.Rotate(limit=20, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
         A.CenterCrop(height=256, width=192, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
     ]),
     A.Compose([
         A.Rotate(limit=20, p=1),
         A.CenterCrop(height=196, width=160, p=1),
     ]),
     A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.CenterCrop(height=196, width=160, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
         A.Rotate(limit=10, p=1),
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
     ]),
     A.Compose([
         A.Rotate(limit=10, p=1),
@@ -40,11 +67,29 @@ transform_list = [
     ]),
     A.Compose([
         A.Rotate(limit=10, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
         A.CenterCrop(height=256, width=192, p=1),
     ]),
     A.Compose([
         A.Rotate(limit=10, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
         A.RandomCrop(height=196, width=160, p=1)
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomCrop(height=196, width=160, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
     ]),
     A.Compose([
         A.RandomScale(scale_limit=0.3, p=1),
@@ -52,11 +97,29 @@ transform_list = [
     ]),
     A.Compose([
         A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.RandomScale(scale_limit=0.3, p=1),
         A.CenterCrop(height=256, width=192, p=1),
     ]),
     A.Compose([
         A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.RandomScale(scale_limit=0.3, p=1),
         A.RandomCrop(height=196, width=160, p=1)
+    ]),
+    A.Compose([
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.RandomCrop(height=196, width=160, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
     ]),
     A.Compose([
         A.Rotate(limit=20, p=1),
@@ -66,12 +129,33 @@ transform_list = [
     A.Compose([
         A.Rotate(limit=20, p=1),
         A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
         A.CenterCrop(height=256, width=192, p=1),
     ]),
     A.Compose([
         A.Rotate(limit=20, p=1),
         A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
         A.RandomCrop(height=196, width=160, p=1)
+    ]),
+    A.Compose([
+        A.Rotate(limit=20, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.RandomCrop(height=196, width=160, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
     ]),
     A.Compose([
         A.Rotate(limit=10, p=1),
@@ -81,12 +165,33 @@ transform_list = [
     A.Compose([
         A.Rotate(limit=10, p=1),
         A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=358, width=268, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
         A.CenterCrop(height=256, width=192, p=1),
     ]),
     A.Compose([
         A.Rotate(limit=10, p=1),
         A.RandomScale(scale_limit=0.3, p=1),
+        A.CenterCrop(height=256, width=192, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
         A.RandomCrop(height=196, width=160, p=1)
+    ]),
+    A.Compose([
+        A.Rotate(limit=10, p=1),
+        A.RandomScale(scale_limit=0.3, p=1),
+        A.RandomCrop(height=196, width=160, p=1),
+        A.GridDistortion(always_apply=False, p=1.0, num_steps=5, distort_limit=(
+            -0.3, 0.3), interpolation=0, border_mode=0, value=(0, 0, 0), mask_value=None)
     ])
 ]
 
@@ -102,9 +207,9 @@ class MaskImageDataLoader(BaseDataLoader):
         # ])
         self.transform = A.Compose([
             A.OneOf(transform_list, p=0.5),
-            A.Resize(224, 224),
-            A.HorizontalFlip(),
-            A.Normalize(mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
+            A.Resize(240, 240),
+            # A.HorizontalFlip(),
+            A.Normalize(mean=(0.445, 0.47, 0.52), std=(0.248, 0.24, 0.235)),
             ToTensorV2()
         ])
         self.data_dir = data_dir
@@ -119,9 +224,8 @@ class MaskImageDataLoader(BaseDataLoader):
 class MaskImageValidDataLoader(BaseDataLoader):
     def __init__(self, data_dir, csv_path, batch_size, shuffle=True, validation_split=0.0, num_workers=2, training=False):
         self.transform = A.Compose([
-            A.Resize(224, 224),
-            A.Normalize(
-                mean=(0.5, 0.5, 0.5), std=(0.2, 0.2, 0.2)),
+            A.Resize(240, 240),
+            A.Normalize(mean=(0.445, 0.47, 0.52), std=(0.248, 0.24, 0.235)),
             ToTensorV2()
         ])
         self.data_dir = data_dir
