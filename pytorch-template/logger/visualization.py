@@ -14,7 +14,8 @@ class TensorboardWriter():
             succeeded = False
             for module in ["torch.utils.tensorboard", "tensorboardX"]:
                 try:
-                    self.writer = importlib.import_module(module).SummaryWriter(log_dir)
+                    self.writer = importlib.import_module(
+                        module).SummaryWriter(log_dir)
                     succeeded = True
                     break
                 except ImportError:
@@ -32,7 +33,7 @@ class TensorboardWriter():
 
         self.tb_writer_ftns = {
             'add_scalar', 'add_scalars', 'add_image', 'add_images', 'add_audio',
-            'add_text', 'add_histogram', 'add_pr_curve', 'add_embedding'
+            'add_text', 'add_histogram', 'add_pr_curve', 'add_embedding', 'add_figure'
         }
         self.tag_mode_exceptions = {'add_histogram', 'add_embedding'}
         self.timer = datetime.now()
@@ -69,5 +70,6 @@ class TensorboardWriter():
             try:
                 attr = object.__getattr__(name)
             except AttributeError:
-                raise AttributeError("type object '{}' has no attribute '{}'".format(self.selected_module, name))
+                raise AttributeError("type object '{}' has no attribute '{}'".format(
+                    self.selected_module, name))
             return attr
