@@ -1,0 +1,4 @@
+
+Loading pretrained weights from url (https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-regnet/regnety_006-c67e57ec.pth)
+Loading pretrained weights from url (https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-regnet/regnety_006-c67e57ec.pth)
+Loading pretrained weights from url (https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-regnet/regnety_006-c67e57ec.pth)

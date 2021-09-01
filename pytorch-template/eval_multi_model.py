@@ -59,37 +59,47 @@ def get_saved_model_state_dict(latest_saved_model_paths):
 
 
 def test_time_augmentation(model1, model2, model3, images):
-    # print(f'here >>>>>>> {images.shape} {len(images)}')
-    # images = [batch_size, (channel RGB 3 * total aug_num), W, H]
     images = torch.split(images, 3, dim=1)
 
-    # after split images = [64, 3, 224, 224] * aug_num
-    # print(f'here ****************** {images[0].shape} {len(images)}')
+
+    list_gender = []
+    list_age = []
+    list_mask = []
+
     for i in range(len(images)):
 
         if i == 0:
-            preds_gender = model1(images[i])
-            preds_age = model2(images[i])
-            preds_mask = model3(images[i])
-            #print(f'when 0 {preds_gender.shape}')
-            # [5, 2], batch, class
-        else:
             pred_gender = model1(images[i])
             pred_age = model2(images[i])
             pred_mask = model3(images[i])
+            list_gender.append(pred_gender)
+            list_age.append(pred_age)
+            list_mask.append(pred_mask)
 
-            preds_mask = torch.stack((preds_mask, pred_mask), dim=1)
-            preds_gender = torch.stack((preds_gender, pred_gender), dim=1)
-            preds_age = torch.stack((preds_age, pred_age), dim=1)
-            #print(
-            #    f'!!!!!!!!! {pred_gender} {preds_gender}')
+        else:
+            pred_gender = model1(images[i])
+            #print('test',pred_gender.shape)
+            pred_age = model2(images[i])
+            pred_mask = model3(images[i])
 
-            preds_gender = torch.mean(preds_gender, dim=1)
-            preds_age = torch.mean(preds_age, dim=1)
-            preds_mask = torch.mean(preds_mask, dim=1)
+            list_gender.append(pred_gender)
+            list_age.append(pred_age)
+            list_mask.append(pred_mask)
+
+    preds_gender = torch.stack(list_gender, dim=2)
+    preds_age = torch.stack(list_age, dim=2)
+    preds_mask = torch.stack(list_mask, dim=2)
+
+    print('-',preds_gender.shape)
+
+    preds_gender = torch.mean(preds_gender, dim=2)
+    preds_age = torch.mean(preds_age, dim=2)
+    preds_mask = torch.mean(preds_mask, dim=2)  
+
+    print(preds_gender.shape)
+    #print(preds_gender)
 
     return preds_gender, preds_age, preds_mask
-
 
 class EvalDataset(Dataset):
     def __init__(self, img_paths, augs, transform):
@@ -137,9 +147,9 @@ def main(config):
         #albumentations.Blur(always_apply=False, p=1.0, blur_limit=(3, 3))
         #albumentations.Equalize(always_apply=False, p=1., mode='cv', by_channels=False)
         albumentations.CLAHE(always_apply=False, p=1.0, clip_limit=(1, 2), tile_grid_size=(3, 3)),
-        albumentations.RandomBrightnessContrast(always_apply=False, p=1.0, brightness_limit=(-0.12999999523162842, 0.10999999940395355), contrast_limit=(-0.11999999731779099, 0.10999999940395355), brightness_by_max=True)
-        #albumentations.HueSaturationValue(always_apply=False, p=1.0, hue_shift_limit=(-11, 8), sat_shift_limit=(-23, 11), val_shift_limit=(-7, 17))
-        #albumentations.HorizontalFlip()
+        albumentations.RandomBrightnessContrast(always_apply=False, p=1.0, brightness_limit=(-0.12999999523162842, 0.10999999940395355), contrast_limit=(-0.11999999731779099, 0.10999999940395355), brightness_by_max=True),
+        albumentations.HueSaturationValue(always_apply=False, p=1.0, hue_shift_limit=(-11, 8), sat_shift_limit=(-23, 11), val_shift_limit=(-7, 17)),
+        albumentations.HorizontalFlip()
     ]
     testset = EvalDataset(image_paths, augs, transform)
     data_loader = DataLoader(testset, batch_size=64, shuffle=False)
@@ -181,9 +191,12 @@ def main(config):
             gender_preds.extend(pred1.cpu().numpy())
             age_preds.extend(pred2.cpu().numpy())
             mask_preds.extend(pred3.cpu().numpy())
+            # gender_preds.append(pred1.cpu().numpy())
+            # age_preds.append(pred2.cpu().numpy())
+            # mask_preds.append(pred3.cpu().numpy())
 
             # if i == 2:
-            #     break
+            #      break
     CLASS_DICT = {
         '000': 0, '001': 1, '002': 2, '010': 3, '011': 4, '012': 5,
         '100': 6, '101': 7, '102': 8, '110': 9, '111': 10, '112': 11,
