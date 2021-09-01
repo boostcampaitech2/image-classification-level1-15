@@ -60,13 +60,13 @@ class CustomDatasetFromImages(Dataset):
 
         self.base_transform = A.Compose([
             A.Resize(224, 224),
-            A.Normalize(mean=(0.560, 0.524, 0.501), std=(0.233, 0.243, 0.245)),
+            A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             ToTensorV2()
         ])
         self.crop_transform = A.Compose([
             A.Resize(224, 224),
             A.HorizontalFlip(),
-            A.Normalize(mean=(0.560, 0.524, 0.501), std=(0.233, 0.243, 0.245)),
+            A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             ToTensorV2()
         ])
 

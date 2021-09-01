@@ -1,4 +1,5 @@
 import argparse
+from cv2 import Algorithm
 import torch
 from tqdm import tqdm
 import data_loader.data_loaders as module_data
@@ -65,21 +66,29 @@ def test_time_augmentation(model1, model2, model3, images):
     # after split images = [64, 3, 224, 224] * aug_num
     # print(f'here ****************** {images[0].shape} {len(images)}')
     for i in range(len(images)):
+
         if i == 0:
             preds_gender = model1(images[i])
             preds_age = model2(images[i])
             preds_mask = model3(images[i])
+            #print(f'when 0 {preds_gender.shape}')
+            # [5, 2], batch, class
         else:
             pred_gender = model1(images[i])
             pred_age = model2(images[i])
             pred_mask = model3(images[i])
+
             preds_mask = torch.stack((preds_mask, pred_mask), dim=1)
             preds_gender = torch.stack((preds_gender, pred_gender), dim=1)
             preds_age = torch.stack((preds_age, pred_age), dim=1)
-            # print(preds_mask.shape)
-            # if batch == 1 preds [2, 3] [aug_num, class num]
-            # if batch == 64 preds [128, 3] [aug_num*batch, class num]
-    return torch.mean(preds_gender, dim=1), torch.mean(preds_age, dim=1), torch.mean(preds_mask, dim=1)
+            #print(
+            #    f'!!!!!!!!! {pred_gender} {preds_gender}')
+
+            preds_gender = torch.mean(preds_gender, dim=1)
+            preds_age = torch.mean(preds_age, dim=1)
+            preds_mask = torch.mean(preds_mask, dim=1)
+
+    return preds_gender, preds_age, preds_mask
 
 
 class EvalDataset(Dataset):
@@ -113,13 +122,24 @@ def main(config):
     transform = albumentations.Compose([
         albumentations.Resize(224, 224),
         albumentations.Normalize(
-            mean=(0.560, 0.524, 0.501), std=(0.233, 0.243, 0.245)),
+            mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
         albumentations.pytorch.transforms.ToTensorV2()
     ])
     augs = [
-        albumentations.HorizontalFlip()
-        # albumentations.ColorJitter(brightness=(0.2, 2), contrast=(
-        #     0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3))
+        #albumentations.CoarseDropout(always_apply=False, p=1.0, max_holes=34, max_height=14, max_width=14, min_holes=20, min_height=1, min_width=1)
+        #albumentations.RandomRain(always_apply=False, p=1.0, slant_lower=-19, slant_upper=20, drop_length=8, drop_width=1, drop_color=(0, 0, 0), blur_value=1, brightness_coefficient=1.0, rain_type='drizzle')
+        #albumentations.GridDistortion(always_apply=False, p=0.5, num_steps=1, distort_limit=(-0.029999999329447746, 0.05000000074505806), interpolation=2, border_mode=0, value=(0, 0, 0), mask_value=None)
+        #albumentations.ElasticTransform(always_apply=False, p=0.5, alpha=0.20000000298023224, sigma=3.359999895095825, alpha_affine=2.009999990463257, interpolation=1, border_mode=1, value=(0, 0, 0), mask_value=None, approximate=False)
+        #albumentations.OpticalDistortion(always_apply=False, p=1.0, distort_limit=(-0.5199999809265137, 0.5199999809265137), shift_limit=(-0.08999999612569809, -0.03999999910593033), interpolation=2, border_mode=1, value=(0, 0, 0), mask_value=None)
+        #albumentations.ImageCompression(always_apply=False, p=1., quality_lower=56, quality_upper=100, compression_type=1)
+        #albumentations.Downscale(always_apply=False, p=1., scale_min=0.699999988079071, scale_max=0.9900000095367432, interpolation=2)
+        #albumentations.RandomFog(always_apply=False, p=1.0, fog_coef_lower=0.14000000059604645, fog_coef_upper=0.2800000011920929, alpha_coef=0.1899999976158142)
+        #albumentations.Blur(always_apply=False, p=1.0, blur_limit=(3, 3))
+        #albumentations.Equalize(always_apply=False, p=1., mode='cv', by_channels=False)
+        albumentations.CLAHE(always_apply=False, p=1.0, clip_limit=(1, 2), tile_grid_size=(3, 3)),
+        albumentations.RandomBrightnessContrast(always_apply=False, p=1.0, brightness_limit=(-0.12999999523162842, 0.10999999940395355), contrast_limit=(-0.11999999731779099, 0.10999999940395355), brightness_by_max=True)
+        #albumentations.HueSaturationValue(always_apply=False, p=1.0, hue_shift_limit=(-11, 8), sat_shift_limit=(-23, 11), val_shift_limit=(-7, 17))
+        #albumentations.HorizontalFlip()
     ]
     testset = EvalDataset(image_paths, augs, transform)
     data_loader = DataLoader(testset, batch_size=64, shuffle=False)
@@ -145,9 +165,6 @@ def main(config):
     model2.eval()
     model3.eval()
 
-    # submission = pd.read_csv(
-    #     config['data_loader']['args']['data_dir'] + 'eval/info.csv')
-
     gender_preds = []
     age_preds = []
     mask_preds = []
@@ -155,10 +172,8 @@ def main(config):
     with torch.no_grad():
         for i, images in enumerate(tqdm(data_loader)):
             images = images.to(device)
-            # print(f'image {images.shape}')
             pred_gender, pred_age, pred_mask = test_time_augmentation(
                 model1, model2, model3, images)
-            # print(f'shape !!!!!!! {pred_gender.shape}')
             pred1 = pred_gender.argmax(dim=-1)
             pred2 = pred_age.argmax(dim=-1)
             pred3 = pred_mask.argmax(dim=-1)
@@ -180,7 +195,7 @@ def main(config):
               for gender, age, mask in preds]
 
     submission['ans'] = labels
-    submission.to_csv('ttttest.csv', index=False)
+    submission.to_csv('tta_test/tta_double/clahe+hsv3.csv', index=False)
 
 
 if __name__ == '__main__':
