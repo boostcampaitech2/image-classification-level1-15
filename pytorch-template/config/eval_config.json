@@ -1,17 +1,17 @@
 {
-    "name": "GenderClassificationEfficientnet",
+    "name": "EVALUATION",
     "n_gpu": 1,
     "save_directory_name": {
-        "gender": "GenderClf",
-        "age": "AgeClf",
-        "mask": "MaskClf"
+        "gender": "multi_augmentation_gender",
+        "age": "age_ensemble",
+        "mask": "multi_augmentation_mask"
     },
     "arch": {
         "type1": "Model",
         "args1": {
             "num_classes": 2,
             "label_name": "gender",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "regnety_006"
         },
         "type2": "Model",
         "args2": {
@@ -23,7 +23,7 @@
         "args3": {
             "num_classes": 3,
             "label_name": "mask",
-            "pretrained_model": "efficientnet_b1"
+            "pretrained_model": "regnety_006"
         }
     },
     "data_loader": {
@@ -57,12 +57,12 @@
         }
     },
     "trainer": {
-        "epochs": 3,
+        "epochs": 20,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
         "monitor": "min val_loss",
-        "early_stop": 2,
-        "tensorboard": true
+        "early_stop": 15,
+        "tensorboard": false
     }
 }
