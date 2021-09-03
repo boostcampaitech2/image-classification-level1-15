@@ -1,0 +1,63 @@
+{
+    "name": "MaskClf",
+    "n_gpu": 1,
+    "arch": {
+        "type": "Model",
+        "args": {
+            "num_classes": 3,
+            "label_name": "mask",
+            "pretrained_model": "regnety_006"
+        }
+    },
+    "data_loader": {
+        "type": "MaskImageDataLoader",
+        "args": {
+            "data_dir": "data/input/data/",
+            "batch_size": 128,
+            "shuffle": true,
+            "validation_split": 0.0,
+            "num_workers": 4,
+            "csv_path": "data/splitted_train_csv_20.csv"
+        }
+    },
+    "valid_data_loader": {
+        "type": "MaskImageValidDataLoader",
+        "args": {
+            "data_dir": "data/input/data/",
+            "batch_size": 128,
+            "shuffle": false,
+            "validation_split": 0.0,
+            "num_workers": 4,
+            "csv_path": "data/splitted_valid_csv_20.csv"
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args": {
+            "lr": 0.001,
+            "weight_decay": 5e-4,
+            "amsgrad": true
+        }
+    },
+    "loss": "cross_entropy_loss",
+    "metrics": [
+        "accuracy",
+        "f1"
+    ],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 10,
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 7,
+        "tensorboard": true
+    }
+}
