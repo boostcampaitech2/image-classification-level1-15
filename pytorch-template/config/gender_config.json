@@ -17,7 +17,7 @@
             "shuffle": true,
             "validation_split": 0.0,
             "num_workers": 4,
-            "csv_path": "data/splitted_train_csv_20.csv"
+            "csv_path": "data/splitted_train_csv_10.csv"
         }
     },
     "valid_data_loader": {
@@ -28,15 +28,15 @@
             "shuffle": false,
             "validation_split": 0.0,
             "num_workers": 4,
-            "csv_path": "data/splitted_valid_csv_20.csv"
+            "csv_path": "data/splitted_valid_csv_10.csv"
         }
     },
     "optimizer": {
-        "type": "Adam",
+        "type": "SGD",
         "args": {
-            "lr": 0.001,
-            "weight_decay": 5e-4,
-            "amsgrad": true
+            "lr": 0.005,
+            "weight_decay": 0.0001,
+            "momentum": 0.9
         }
     },
     "loss": "cross_entropy_loss",
@@ -52,12 +52,12 @@
         }
     },
     "trainer": {
-        "epochs": 10,
+        "epochs": 12,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
         "monitor": "min val_loss",
-        "early_stop": 7,
+        "early_stop": 8,
         "tensorboard": true
     }
 }
