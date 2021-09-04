@@ -33,14 +33,6 @@ class Model(BaseModel):
         elif num_classes == 18 and label_name != "total":
             assert "Num Classes and Label Name are not matched."
 
-# Gender [0, 1] # 0.54, 0.46
-# Age [0, 1, 2]
-# Mask [0, 1, 2]
-# total lable = 0 male, < 30, mask
-# (1, 0, 1, 0, 0, 1, 0, 0) [8]
-
-# [64, 3, 224, 224] -> [64, 8]
-
 
 class TotalModel(BaseModel):
     def __init__(self, num_classes=18, label_name="total", pretrained_model="efficientnet_b1"):
@@ -75,9 +67,6 @@ class TotalModel(BaseModel):
 
         output = torch.cat((output_gender, output_age, output_mask), dim=1)
 
-        # NOTE: Output Shape
-        # gender = output[:, :2], age = output[:, 2:5], mask = output[:, 5:]
-        # output = self.fc(F.relu(output))
         return output
 
     def init_model(self):
@@ -149,13 +138,9 @@ class AgeModelEnsemble(BaseModel):
 
     def init_model(self):
         # NOTE: BEST
-        # none_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/none_mask_age/checkpoint-epoch36.pth"
-        # incorrect_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/incorrect_mask_age/checkpoint-epoch33.pth"
-        # mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/mask_age/checkpoint-epoch43.pth"
-
-        none_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/none_mask_age/0901_065745/checkpoint-epoch50.pth"
-        incorrect_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/incorrect_mask_age/0901_092905/checkpoint-epoch40.pth"
-        mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/mask_age/0901_124207/checkpoint-epoch29.pth"
+        none_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/none_mask_age/checkpoint-epoch36.pth"
+        incorrect_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/incorrect_mask_age/checkpoint-epoch33.pth"
+        mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/mask_age/checkpoint-epoch43.pth"
 
         none_mask_age_model_checkpoint = torch.load(none_mask_age_model_path)
         incorrect_mask_age_model_checkpoint = torch.load(
