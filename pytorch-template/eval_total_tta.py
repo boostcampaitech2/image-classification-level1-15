@@ -88,7 +88,8 @@ def main():
         A.pytorch.transforms.ToTensorV2()
     ])
     augs = [
-        A.HorizontalFlip(),
+        A.CoarseDropout(always_apply=False, p=1.0, max_holes=34, max_height=14,
+                        max_width=14, min_holes=20, min_height=1, min_width=1)
         # A.OneOf(transform_list, p=0.5)
         # albumentations.ColorJitter(brightness=(0.2, 2), contrast=(
         #     0.3, 2), saturation=(0.2, 2), hue=(-0.3, 0.3))

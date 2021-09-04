@@ -45,7 +45,7 @@ def get_latest_saved_model_paths(config):
         # NOTE: BEST SCORE -> Evaluation using Crop Image F1: 0.7334
         "/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_gender/0830_105923/checkpoint-epoch8.pth",
         # "/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_age/0830_120150/checkpoint-epoch9.pth",
-        "/opt/ml/level1-15/pytorch-template/saved/models/age_ensemble/model_best.pth",
+        "/opt/ml/level1-15/pytorch-template/saved/models/age_ensemble_add_dataset/0902_092612/checkpoint-epoch2.pth",
         '/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_mask/0830_121746/checkpoint-epoch11.pth'
     ]
     return latest_saved_model_paths
@@ -114,7 +114,7 @@ class EvalDataset(Dataset):
 
 def main(config):
     test_dir = 'data/input/data/eval'
-    image_dir = os.path.join(test_dir, 'mtcnn_only_crop_images')
+    image_dir = os.path.join(test_dir, 'eval_crop')
     submission = pd.read_csv(os.path.join(test_dir, 'info.csv'))
 
     image_paths = [os.path.join(image_dir, img_id)

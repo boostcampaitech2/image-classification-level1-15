@@ -238,7 +238,7 @@ def get_latest_saved_model_paths(config):
         "/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_gender/0830_105923/checkpoint-epoch8.pth",
         "/opt/ml/level1-15/pytorch-template/saved/models/none_mask_age/checkpoint-epoch36.pth",
         "/opt/ml/level1-15/pytorch-template/saved/models/incorrect_mask_age/checkpoint-epoch33.pth",
-        "/opt/ml/level1-15/pytorch-template/saved/models/mask_age/checkpoint-epoch43.pth",
+        "/opt/ml/level1-15/pytorch-template/saved/models/mask_age/0902_012534/checkpoint-epoch10.pth",
         "/opt/ml/level1-15/pytorch-template/saved/models/multi_augmentation_mask/0830_121746/checkpoint-epoch11.pth"
     ]
     return latest_saved_model_paths
