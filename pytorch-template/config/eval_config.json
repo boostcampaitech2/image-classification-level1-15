@@ -13,7 +13,7 @@
             "label_name": "gender",
             "pretrained_model": "regnety_006"
         },
-        "type2": "Model",
+        "type2": "AgeModelEnsemble",
         "args2": {
             "num_classes": 3,
             "label_name": "age",
