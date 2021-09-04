@@ -137,7 +137,6 @@ class AgeModelEnsemble(BaseModel):
         return x
 
     def init_model(self):
-        # NOTE: BEST
         none_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/none_mask_age/checkpoint-epoch36.pth"
         incorrect_mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/incorrect_mask_age/checkpoint-epoch33.pth"
         mask_age_model_path = "/opt/ml/level1-15/pytorch-template/saved/models/mask_age/checkpoint-epoch43.pth"
