@@ -29,7 +29,7 @@ apt-get install libgl1-mesa-glx
 
 ### Evaluation
 1. edit config/eval_config.json
-2. python eval_multi_model.py -c config/eval_config.json or python eval_total.py
+2. python eval_multi_model.py -c config/eval_config.json `or` python eval_total.py
 
 
 ## Warning
