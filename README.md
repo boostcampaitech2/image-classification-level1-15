@@ -20,18 +20,16 @@ apt-get install libgl1-mesa-glx
 
 ### Train Ensemble models
 1. edit config/age_ensemble_config.json
-*** 2. edit model paths in model.py ***
+2. edit model paths in model.py
 3. python train.py -c config/age_ensemble_config.json
 
 3. edit config/total_config.json
-*** 4. edit model paths in model.py ***
+4. edit model paths in model.py
 5. python train.py -c config/total_config.json
 
 ### Evaluation
 1. edit config/eval_config.json
-2. python eval_multi_model.py -c config/eval_config.json
-or
-2. python eval_total.py
+2. python eval_multi_model.py -c config/eval_config.json or python eval_total.py
 
 
 ## Warning
