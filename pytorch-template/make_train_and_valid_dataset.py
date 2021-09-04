@@ -1,3 +1,4 @@
+from cv2 import split
 import pandas as pd
 import numpy as np
 import random
@@ -65,46 +66,46 @@ class MakeTrainAndValidCsvWithLabeling():
             if gender == 'male':
                 if age < 30:
                     label = 0
-                elif 30 <= age < 60:
+                elif 30 <= age < 58:
                     label = 1
-                elif age >= 60:
+                elif age >= 58:
                     label = 2
             elif gender == 'female':
                 if age < 30:
                     label = 3
-                elif 30 <= age < 60:
+                elif 30 <= age < 58:
                     label = 4
-                elif age >= 60:
+                elif age >= 58:
                     label = 5
         elif file_name.startswith('incorrect'):
             if gender == 'male':
                 if age < 30:
                     label = 6
-                elif 30 <= age < 60:
+                elif 30 <= age < 58:
                     label = 7
-                elif age >= 60:
+                elif age >= 58:
                     label = 8
             elif gender == 'female':
                 if age < 30:
                     label = 9
-                elif 30 <= age < 60:
+                elif 30 <= age < 58:
                     label = 10
-                elif age >= 60:
+                elif age >= 58:
                     label = 11
         elif file_name.startswith('normal'):
             if gender == 'male':
                 if age < 30:
                     label = 12
-                elif 30 <= age < 60:
+                elif 30 <= age < 58:
                     label = 13
-                elif age >= 60:
+                elif age >= 58:
                     label = 14
             elif gender == 'female':
                 if age < 30:
                     label = 15
-                elif 30 <= age < 60:
+                elif 30 <= age < 58:
                     label = 16
-                elif age >= 60:
+                elif age >= 58:
                     label = 17
 
         return label
@@ -120,9 +121,9 @@ class MakeTrainAndValidCsvWithLabeling():
     def categorize_age(self, n):
         if int(n) < 30:
             return 0
-        elif 30 <= int(n) < 60:
+        elif 30 <= int(n) < 58:
             return 1
-        elif int(n) >= 60:
+        elif int(n) >= 58:
             return 2
 
     def categorize_mask(self, s):
@@ -234,5 +235,6 @@ class MakeTrainAndValidCsvWithLabeling():
 
 
 splitter = MakeTrainAndValidCsvWithLabeling(0.10)
-splitter.write_valid_csv_with_multi_labels()
+splitter.write_train_csv_with_multi_labels()
 splitter.write_splitted_train_csv_with_multi_labels()
+splitter.write_valid_csv_with_multi_labels()
